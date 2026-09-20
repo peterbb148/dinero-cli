@@ -108,6 +108,7 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(build.subprocess, "run", execute)
+    monkeypatch.setattr("scripts.smoke_api.smoke_api", lambda *args: None)
     build.smoke(tmp_path / "dinero", "0.1.0")
     assert len(calls) == 10
     for _, settings in calls:
