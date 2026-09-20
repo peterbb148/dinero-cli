@@ -1,5 +1,6 @@
 """Keep contract runs offline and away from a developer's configuration."""
 
+import os
 import socket
 import subprocess
 
@@ -8,6 +9,9 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def isolated_cli(tmp_path, monkeypatch):
+    for name in list(os.environ):
+        if name.startswith("DINERO_"):
+            monkeypatch.delenv(name)
     for name in ("HOME", "USERPROFILE", "XDG_CONFIG_HOME", "APPDATA", "LOCALAPPDATA"):
         monkeypatch.setenv(name, str(tmp_path))
     monkeypatch.chdir(tmp_path)

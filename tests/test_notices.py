@@ -16,6 +16,7 @@ def test_analysis_format_and_input_paths(tmp_path):
         notices.analysis_files(toc)
     values = [[] for _ in range(20)]
     values[14] = [("module", str(tmp_path / "module.py"), "PYMODULE")]
+    values[14].append(("namespace", "-", "PYMODULE"))
     toc.write_text(repr(values))
     assert notices.analysis_files(toc) == [("module", tmp_path / "module.py", "PYMODULE")]
     toc.write_text("__import__('os').system('never')")
@@ -161,3 +162,50 @@ def test_unknown_native_inputs_in_application_trees_are_rejected(
     monkeypatch.setattr(notices, "analysis_files", lambda p: [("third-party.dll", native, kind)])
     with pytest.raises(ValueError, match="Unidentified bundled input"):
         notices.collect("0.2.0", "linux-x86_64", inventory.executable)
+
+
+def test_bundled_gcc_runtime_is_inventoried_with_its_exception(inventory, monkeypatch):
+    native = inventory.write("system/libgcc_s.so.1")
+    original = notices.analysis_files
+    monkeypatch.setattr(
+        notices,
+        "analysis_files",
+        lambda path: [*original(path), ("libgcc_s.so.1", native, "BINARY")],
+    )
+    monkeypatch.setattr(
+        notices,
+        "gcc_runtime",
+        lambda source: ("14.2.0", {"COPYRIGHT.txt": b"GPL and GCC exception"}),
+    )
+    members = notices.collect("0.3.0", "linux-x86_64", inventory.executable)
+    component = next(
+        c for c in json.loads(members["SBOM.cdx.json"])["components"] if c["name"] == "libgcc-s1"
+    )
+    assert component["version"] == "14.2.0"
+    assert component["licenses"] == [{"expression": "GPL-3.0-or-later WITH GCC-exception-3.1"}]
+    assert members["licenses/libgcc-s1/COPYRIGHT.txt"] == b"GPL and GCC exception"
+
+
+def test_gcc_ownership_version_and_original_legal_files(monkeypatch):
+    source = Path("/usr/lib/example/libgcc_s.so.1")
+    replies = iter([f"libgcc-s1:arm64: {source}\n", "14.2.0"])
+    calls = []
+
+    def query(args, **kwargs):
+        calls.append(args)
+        return next(replies)
+
+    monkeypatch.setattr(notices.subprocess, "check_output", query)
+    monkeypatch.setattr(Path, "read_bytes", lambda path: str(path).encode())
+    version, texts = notices.gcc_runtime(source)
+    assert version == "14.2.0" and len(texts) == 2
+    assert b"/usr/share/doc/libgcc-s1/copyright" == texts["COPYRIGHT.txt"]
+    assert calls[1][-1] == "libgcc-s1:arm64"
+    for bad in ("other-package: /wrong", f"other-package: {source}"):
+        monkeypatch.setattr(notices.subprocess, "check_output", lambda *a, **kw: bad)
+        with pytest.raises(ValueError, match="not owned"):
+            notices.gcc_runtime(source)
+    replies = iter([f"libgcc-s1:arm64: {source}\n", ""])
+    monkeypatch.setattr(notices.subprocess, "check_output", query)
+    with pytest.raises(ValueError, match="version is missing"):
+        notices.gcc_runtime(source)

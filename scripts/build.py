@@ -61,7 +61,11 @@ def smoke(executable: Path, version: str) -> None:
     environment.pop("CLICOLOR_FORCE", None)
     environment.pop("PYTHONPATH", None)
     environment.pop("PYTHONHOME", None)
+    for name in list(environment):
+        if name.startswith("DINERO_"):
+            environment.pop(name)
     with tempfile.TemporaryDirectory() as directory:
+        environment["DINERO_CONFIG_DIR"] = str(Path(directory) / "state")
         for option, expected in [("--version", version), ("--help", "--version")]:
             result = subprocess.run(
                 [str(executable.resolve()), option],
@@ -73,6 +77,52 @@ def smoke(executable: Path, version: str) -> None:
             )
             if expected not in result.stdout or result.stderr:
                 raise ValueError(f"Standalone smoke test failed: {option}")
+        smoke_config(executable, environment, directory)
+
+
+def smoke_config(executable: Path, environment: dict[str, str], directory: str) -> None:
+    """Verify real config, JSON and credential roundtrips in each native binary."""
+    cases = [
+        (["config", "set", "organization", "123", "--json"], {"organization": "123"}, None),
+        (["config", "get", "organization", "--json"], {"organization": "123"}, None),
+        (
+            ["config", "set", "credential-backend", "file", "--json"],
+            {"credential_backend": "file"},
+            None,
+        ),
+        (
+            ["config", "set-client-secret", "--input", "-", "--json"],
+            {"client_secret_stored": True},
+            "smoke-secret-one",
+        ),
+        (
+            ["config", "set-client-secret", "--input", "-", "--json"],
+            {"client_secret_stored": True},
+            "smoke-secret-two",
+        ),
+    ]
+    for arguments, expected, secret in cases:
+        result = subprocess.run(
+            [str(executable.resolve()), *arguments],
+            cwd=directory,
+            env=environment,
+            input=secret,
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        if result.stderr or json.loads(result.stdout) != expected:
+            raise ValueError("Standalone config/credential smoke test failed")
+    result = subprocess.run(
+        [str(executable.resolve()), "config", "get", "organization"],
+        cwd=directory,
+        env=environment,
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    if result.stderr or "123" not in result.stdout or "organization" not in result.stdout:
+        raise ValueError("Standalone human config output failed")
 
 
 def freezer_environment(target: str) -> dict[str, str]:
