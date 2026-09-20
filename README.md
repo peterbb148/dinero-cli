@@ -61,3 +61,47 @@ replacing an existing binary; keep the previous binary to roll back.
 
 GHAS, repository rulesets/Copilot policy, final licensing/notices and SBOM are separate
 issues (#15, #16, #17). Do not treat this workflow PR as completion of those controls.
+
+## Constitution and command contracts
+
+Read [.specify/memory/constitution.md](.specify/memory/constitution.md) before specifying,
+implementing or reviewing a command. This is the standard GitHub Spec Kit constitution
+location. No particular agent harness or Spec Kit installation is required.
+
+Install this clone's hooks once (cloning does not install Git hooks):
+
+```sh
+uv run --locked pre-commit install
+uv run --locked pre-commit run --all-files
+uv run --locked pytest -q -s tests/contracts
+```
+
+Hooks run the locked Ruff lint/formatter and offline command contracts. Ruff may fix files;
+review and stage those changes before retrying the commit. CI runs the same hooks and the
+full test/coverage suite. Configure the required `PR gate` ruleset to enforce this at merge
+(issue #16); local hooks alone cannot prevent bypass with `--no-verify`.
+
+For each new command:
+
+1. Add its exact command path to `REGISTRY` in `tests/contracts/test_cli.py`. Discovery
+   visits all groups and leaves, and rejects missing/stale entries or changed options.
+2. Classify it as data, control or group with a concrete rationale. Data commands require
+   `--json`. Help/version/completion are narrow control surfaces; API responses are data.
+3. Add `Case` fixtures with actual human-readable tokens, the unchanged expected JSON
+   response, and expected exit codes. Cover meaningful empty and populated response shapes.
+   Use each case's `setup` context manager to replace auth/transport at their boundaries.
+4. Cover validation, authentication, API and transport errors where applicable. Record an
+   explicit rationale for each inapplicable category in `excluded_failures`; all data
+   commands require success and error cases. Include sentinel credentials when invoking
+   `check` so accidental output disclosure fails.
+5. Keep fixtures in `tests/contracts/`: its autouse fixture isolates configuration and
+   blocks network/subprocess calls. No live Dinero account or LLM is used. JSON errors
+   belong on stderr with empty stdout; use `status: null` if no HTTP response exists.
+
+The checker exercises redirected human/JSON output with normal and forced-colour settings.
+Its adversarial tests prove that missing `--json`, noise/ANSI, wrong streams/status,
+changed payloads and unregistered commands fail. Today the CLI has **zero data commands**;
+only help/version and Typer completion controls exist. Completion callbacks run with shell
+lookup/installation mocked. These tests do not prove visual quality, every possible secret
+path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations
+to review. Governance, tests, hooks and development-only dependencies are not binary inputs.

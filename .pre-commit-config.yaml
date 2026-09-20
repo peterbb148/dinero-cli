@@ -1,0 +1,19 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff lint (UV locked)
+        entry: uv run --locked ruff check --fix
+        language: system
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: Ruff format (UV locked)
+        entry: uv run --locked ruff format
+        language: system
+        types_or: [python, pyi]
+      - id: cli-contracts
+        name: CLI constitution contracts
+        entry: uv run --locked pytest -q -s tests/contracts
+        language: system
+        pass_filenames: false
+        always_run: true
