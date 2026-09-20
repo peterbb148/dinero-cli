@@ -25,8 +25,9 @@ The current CLI has:
 - `accounts entry|purchase|deposit`: account views with endpoint-specific filters.
 - `accounting-years list` and `vat-types list`: accounting lookup data.
 - `files list`: one page of document archive metadata.
+- `invoices list|get|create|update|delete|book|send`: explicit invoice operations.
+- `purchase-vouchers get|create|update|delete|book`: explicit purchase voucher operations.
 
-Invoice and purchase voucher commands are planned, not yet available.
 Agents must use dedicated resource commands. Do not use `dinero api`, curl, handwritten HTTP
 or Python imports to access accounting data. If the needed operation has no dedicated command,
 report the missing capability and implement it through the repository workflow before using it.
@@ -148,6 +149,40 @@ A field present in both JSON and an option is an error, even when values match. 
 fields are retained for the API. Updates require the full documented payload and never merge
 with a hidden read. Get/update/delete take a resource GUID argument; delete is destructive.
 In PowerShell prefer file input; piped input must be UTF-8.
+
+## Invoices and purchase vouchers
+
+Invoice lists expose documented dates, fields, free text, status/query/change filters, sorting
+and explicit pagination. Purchase vouchers have no documented list operation; discover linked
+voucher GUIDs through reads such as entries and files. Do not invent `purchase-vouchers list`.
+
+Use `invoices get GUID --json` or `purchase-vouchers get GUID --json` before an authorized change.
+Pass the exact returned Timestamp in JSON or `--timestamp`; it is an opaque version identifier.
+A conflict requires inspection and a new decision, never automatically replacing the timestamp.
+
+Create/update take nested payloads through `--input FILE|-`, with optional top-level convenience
+options shown in help. Invoice create requires `ProductLines`; update also requires `Timestamp`.
+Each invoice line requires `AccountNumber`, `BaseAmountValue`, `Discount`, `Quantity`.
+Purchase create requires `PurchaseType`; purchase update requires `ContactGuid`, `Lines`,
+`PurchaseType`, `Timestamp`, `VoucherDate`. Each supplied purchase line requires `Amount`.
+Dinero owns accounting rules, conditional requirements and defaults; do not invent them.
+
+`create` only creates a draft. `book GUID --timestamp VALUE` books it and changes the accounts;
+`--number` is optional. `invoices send GUID` sends email via the email endpoint; it does not book
+or use EAN. Send requires explicit `ShouldAddTrustPilotEmailAsBcc` in JSON or one of
+`--trustpilot-bcc` / `--no-trustpilot-bcc`.
+Other email fields and Timestamp can be supplied in JSON or supported options; inspect the
+intended recipient before authorized delivery. Delete sends its Timestamp object and is explicit
+and destructive. No mutation chains, hidden reads, prompts or retries are performed.
+
+For an already authorized booking (replace GUID and TIMESTAMP with values from a prior read):
+
+```sh
+dinero invoices book GUID --organization 123 --timestamp TIMESTAMP --json
+```
+
+All voucher writes support file/stdin input, preserve unknown fields and reject collisions with
+explicit options. CLI help identifies required top-level payload fields and mutation consequences.
 
 ## Handle failures
 
