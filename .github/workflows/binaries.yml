@@ -1,0 +1,63 @@
+name: Native binaries
+on:
+  workflow_call:
+    inputs:
+      commit:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      upload:
+        default: false
+        type: boolean
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: linux-x86_64
+            python-platform: linux-x86_64-gnu
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+            python-platform: linux-aarch64-gnu
+          - runner: windows-2022
+            target: windows-x86_64
+            python-platform: windows-x86_64-none
+          - runner: windows-11-arm
+            target: windows-arm64
+            python-platform: windows-aarch64-none
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: false
+      - name: Select native Python and install locked build dependencies
+        env:
+          PYTHON_PLATFORM: ${{ matrix.python-platform }}
+        shell: bash
+        run: uv sync --locked --no-dev --group build --managed-python --python "cpython-$(cat .python-version)-$PYTHON_PLATFORM"
+      - name: Build and test standalone executable
+        env:
+          BUILD_VERSION: ${{ inputs.version }}
+          BUILD_TARGET: ${{ matrix.target }}
+        shell: bash
+        run: uv run --no-sync python -m scripts.build build --version "$BUILD_VERSION" --target "$BUILD_TARGET"
+      - name: Transfer release binary
+        if: inputs.upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dinero-binary-${{ matrix.target }}
+          path: dist/archives/*.zip
+          if-no-files-found: error
+          retention-days: 1

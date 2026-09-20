@@ -1,0 +1,112 @@
+name: CD
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Also parse/validate this workflow on PRs; all mutating jobs require main.
+  pull_request:
+    paths: ['.github/workflows/cd.yml']
+permissions:
+  contents: read
+concurrency:
+  group: dinero-cd
+  cancel-in-progress: false
+  queue: max
+jobs:
+  plan:
+    if: github.ref == 'refs/heads/main'
+    name: Release decision
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    timeout-minutes: 5
+    outputs:
+      build: ${{ steps.plan.outputs.build }}
+      version: ${{ steps.plan.outputs.version }}
+      commit: ${{ steps.plan.outputs.commit }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uv run --no-project python -m scripts.release plan
+      - name: Retry retention without creating a version
+        if: steps.plan.outputs.build == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uv run --no-project python -m scripts.release cleanup
+  tests:
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.plan.outputs.commit }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - run: uv sync --locked
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync mypy
+      - run: uv run --no-sync pytest --cov --cov-report=term-missing
+  binaries:
+    needs: [plan, tests]
+    if: needs.plan.outputs.build == 'true'
+    uses: ./.github/workflows/binaries.yml
+    with:
+      commit: ${{ needs.plan.outputs.commit }}
+      version: ${{ needs.plan.outputs.version }}
+      upload: true
+  publish:
+    needs: [plan, binaries]
+    if: needs.plan.outputs.build == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.plan.outputs.commit }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: dinero-binary-*
+          merge-multiple: true
+          path: dist/release
+      - run: uv run --no-project python -m scripts.build checksums
+      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: dist/release/*.zip
+      - name: Publish complete release and retain two binary versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.plan.outputs.tag }}
+        run: uv run --no-project python -m scripts.release publish --tag "$RELEASE_TAG"
+  cleanup:
+    if: always() && github.ref == 'refs/heads/main'
+    needs: [plan, tests, binaries, publish]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Delete temporary binary transfers for this run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts"             --jq '.artifacts[] | select(.name | startswith("dinero-binary-")) | .id' > artifact-ids
+          while read -r artifact_id; do
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id"
+          done < artifact-ids
