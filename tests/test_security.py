@@ -27,7 +27,11 @@ def test_security_jobs_use_safe_events_and_minimal_permissions():
     assert set(gate["needs"]) == {"codeql", "dependencies"}
     review = workflow["jobs"]["dependencies"]["steps"][0]["with"]
     assert review["fail-on-severity"] == "high"
-    assert "development" in review["fail-on-scopes"]
+    assert {scope.strip() for scope in review["fail-on-scopes"].split(",")} == {
+        "runtime",
+        "development",
+        "unknown",
+    }
     assert review["comment-summary-in-pr"] == "never"
 
 
