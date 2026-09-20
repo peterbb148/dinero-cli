@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from auth_cases import CONTRACTS as AUTH_CONTRACTS
 from config_cases import CONTRACTS
 from typer import completion
 
@@ -13,6 +14,7 @@ from dinero_cli.cli import app
 # callbacks still execute; neither an actual shell nor the user's rc files are touched.
 REGISTRY = {
     **CONTRACTS,
+    **AUTH_CONTRACTS,
     (): Contract(
         kind="group",
         options=frozenset({"--version", "--install-completion", "--show-completion"}),
@@ -32,4 +34,4 @@ def test_production_command_contracts(monkeypatch):
     monkeypatch.setattr(completion, "install", lambda: ("bash", Path("fixture-completion.sh")))
     report = check(app, REGISTRY, secrets=("contract-access-token", "contract-client-secret"))
     print(report)
-    assert report == "CLI contracts: 6 command nodes, 4 data commands"
+    assert report == "CLI contracts: 10 command nodes, 7 data commands"

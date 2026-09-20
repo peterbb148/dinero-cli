@@ -84,7 +84,7 @@ def test_unsafe_origin_is_rejected(state, value):
         ("response-mode", "invalid"),
         ("output", "yaml"),
         ("credential-backend", "plaintext"),
-        ("redirect-uri", "https://evil.test/callback"),
+        ("redirect-uri", "http://external.test/callback"),
         ("redirect-uri", "http://127.0.0.1/callback"),
         ("redirect-uri", "http://user:password@127.0.0.1:123/callback"),
     ],

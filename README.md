@@ -1,9 +1,9 @@
 # Dinero CLI
 
 A Python/Typer CLI distributed as standalone Windows and Linux executables.
-This milestone implements configuration, protected credential storage and conditional CD.
-Dinero API/authentication commands are not implemented yet; see the repository issues.
-Start with [configuration and credential storage](docs/configuration.md).
+This milestone implements configuration, protected credential storage, Visma authorization and CD.
+Dinero accounting API commands are not implemented yet; see the repository issues.
+Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
 There is no official pip/PyPI release. The project is source available under Apache-2.0 **subject to Commons Clause 1.0**;
 see [LICENSE](LICENSE). It is not licensed under unrestricted Apache-2.0.
 
@@ -107,7 +107,7 @@ For each new command:
 
 The checker exercises redirected human/JSON output with normal and forced-colour settings.
 Its adversarial tests prove that missing `--json`, noise/ANSI, wrong streams/status,
-changed payloads and unregistered commands fail. Today the CLI has **four data commands** under `config`;
+changed payloads and unregistered commands fail. Today the CLI has **seven data commands** under `config` and `auth`;
 help/version and Typer completion remain control surfaces. Completion callbacks run with shell
 lookup/installation mocked. These tests do not prove visual quality, every possible secret
 path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations
