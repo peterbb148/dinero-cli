@@ -105,7 +105,11 @@ For each new command:
    explicit rationale for each inapplicable category in `excluded_failures`; all data
    commands require success and error cases. Include sentinel credentials when invoking
    `check` so accidental output disclosure fails.
-5. Keep fixtures in `tests/contracts/`: its autouse fixture isolates configuration and
+5. Update `skills/dinero/SKILL.md` in the same PR for new or changed CLI functionality,
+   including options, authentication, payloads, output/errors and mutation behavior. Verify
+   examples against actual help and offline behavior; describe the skill changes and evidence
+   in the PR. SKILL-001 makes stale or missing guidance a merge-blocking review finding.
+6. Keep fixtures in `tests/contracts/`: its autouse fixture isolates configuration and
    blocks network/subprocess calls. No live Dinero account or LLM is used. JSON errors
    belong on stderr with empty stdout; use `status: null` if no HTTP response exists.
 

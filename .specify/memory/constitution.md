@@ -58,6 +58,26 @@ CLI distribution MUST use native Windows/Linux x86-64/ARM64 binaries, not an off
 Only changed build inputs trigger a minor release; documentation and development tooling alone
 MUST NOT. Retain binary assets for the latest two complete releases.
 
+### VII. Skill stays current with the CLI (SKILL-001)
+
+Every PR that adds, removes or changes user-visible CLI functionality MUST update
+`skills/dinero/SKILL.md` in the same PR. This includes commands, options, request/payload
+handling, authentication, organization selection, output, exit codes and mutation/retry
+behavior. Update relevant linked documentation too; a future documentation issue or a
+version-number-only edit does not satisfy this requirement.
+
+The skill MUST describe the implemented CLI, remain harness-independent and direct agents to
+use the CLI rather than reconstruct HTTP or OAuth. New dedicated commands MUST replace obsolete
+escape-hatch guidance where applicable. Examples MUST be checked against the changed command's
+actual help and behavior using offline fixtures when execution would require live authorization
+or mutate accounting data. Do not claim a live workflow was tested when only help was checked.
+
+PR descriptions MUST identify the changed capability and its corresponding skill update, with
+validation evidence. Reviewers MUST treat missing, stale or misleading guidance as an incomplete
+implementation and require correction before merge. Internal refactoring or documentation-only
+changes with no user-visible CLI change need no artificial skill edit; explain why the existing
+guidance remains accurate. Mere file-touch checks do not prove semantic consistency.
+
 ## Enforcement and Scope
 
 | Rule | Automated evidence | Required review |
@@ -71,6 +91,7 @@ MUST NOT. Retain binary assets for the latest two complete releases.
 | SAFE-001 | Mocked error/success cases, isolated configuration | Authorization, side effects and retry safety |
 | DEV-001 | Pre-commit, Ruff, contract checker and measured coverage in CI | Required branch protection, Copilot review and workflow compliance |
 | REL-001 | Release fingerprinting and binary matrix tests | Licensing and supported platform policy |
+| SKILL-001 | Existing command/help and offline behavior tests provide validation evidence; prose synchronization is not automatically checked | Same-PR skill update for every user-visible CLI change, accurate examples and PR description evidence |
 
 A passing contract suite proves only its enumerated cases. It MUST report the discovered command
 count honestly, including zero data commands while only help/version exist. It MUST NOT assert
@@ -81,6 +102,7 @@ Spec Kit governance artifact; executable tests, not an LLM interpreting Markdown
 
 Follow the applicable AGENTS.md: inspect first, use an issue and approved plan, create a dedicated
 issue branch, test, commit, push and open a PR. Never commit implementation directly to main.
+Update the skill alongside functionality and record SKILL-001 evidence in the PR description.
 Request Copilot review. Install local hooks with `uv run pre-commit install`; git clone does not
 install them automatically. `uv run pre-commit run --all-files` runs the same checks on demand.
 CI MUST run the hooks even if a local commit uses `--no-verify`; required-check enforcement is a
@@ -96,6 +118,7 @@ an automated check MUST be called out, never hidden in a registry exemption.
 
 Constitution versions are independent of binary releases: MAJOR for incompatible rule removal or
 redefinition, MINOR for added/materially expanded requirements, PATCH for clarifications.
-This initial version ratifies the owner's existing CLI/output and pre-commit requirements.
+Version 1.1.0 adds SKILL-001 and its same-PR documentation/review obligation. Existing executable
+checks remain unchanged; semantic consistency of the skill is an explicit review responsibility.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-20 | **Last Amended**: 2026-09-20
+**Version**: 1.1.0 | **Ratified**: 2026-09-20 | **Last Amended**: 2026-09-20
