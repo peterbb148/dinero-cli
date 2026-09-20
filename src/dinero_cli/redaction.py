@@ -15,7 +15,8 @@ SENSITIVE = {
     "authorizationcode",
 }
 ASSIGNMENT = re.compile(
-    r"(?i)\b(access[_-]?token|refresh[_-]?token|client[_-]?secret|id[_-]?token|password|code[_-]?verifier)"
+    r"(?i)\b(access[_-]?token|refresh[_-]?token|client[_-]?secret|id[_-]?token|password|"
+    r"code[_-]?verifier|authorization[_-]?code)"
     r"""["']?\s*[:=]\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s,;&]+)"""
 )
 BEARER = re.compile(r"(?i)\bbearer\s+[^\s,;]+")

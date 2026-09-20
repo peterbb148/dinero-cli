@@ -5,7 +5,7 @@ import re
 import ssl
 from collections.abc import Sequence
 from typing import Any
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlencode
 
 import httpx
 
@@ -108,10 +108,13 @@ class APIClient:
             ) as client:
                 kwargs: dict[str, Any] = {"json": body} if body is not None else {}
                 try:
-                    request = client.build_request(
-                        method, origin + path, params=list(query), **kwargs
-                    )
-                except (ValueError, UnicodeError, TypeError) as error:
+                    # HTTPX QueryParams groups repeated keys and changes interleaved order.
+                    # Encode the ordered pairs directly into the URL instead.
+                    url = httpx.URL(origin + path)
+                    if query:
+                        url = url.copy_with(query=urlencode(query).encode("ascii"))
+                    request = client.build_request(method, url, **kwargs)
+                except (ValueError, UnicodeError, TypeError, httpx.InvalidURL) as error:
                     raise CLIError("Invalid path, query or JSON request payload.") from error
                 destination = request.url
                 expected = httpx.URL(origin)

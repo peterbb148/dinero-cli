@@ -43,7 +43,7 @@ def run(instance, method="GET", path="/v1/{organizationId}/contacts", **kwargs):
 def test_one_request_exact_method_path_query_body_and_worker_auth(method):
     calls = []
     payload = None if method == "GET" else {"Name": "Æble A/S", "Items": [{"Amount": 1}]}
-    query = [("queryFilter", "Name eq 'A&B += æ'"), ("fields", "Name"), ("fields", "Email")]
+    query = [("fields", "Name"), ("queryFilter", "Name eq 'A&B += æ'"), ("fields", "Email")]
 
     def respond(request):
         calls.append(request)
@@ -304,3 +304,8 @@ def test_unstructured_error_redaction_handles_quoted_secret_fields():
     safe = redact(raw, ())
     assert "unknown" not in safe and "another" not in safe
     assert "[REDACTED]" in safe
+
+
+@pytest.mark.parametrize("key", ["authorization_code", "authorization-code", "authorizationCode"])
+def test_plaintext_authorization_codes_are_redacted(key):
+    assert "never-show" not in redact(f"{key}=never-show", ())
