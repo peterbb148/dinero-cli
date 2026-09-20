@@ -1,0 +1,15 @@
+Dinero CLI
+Copyright 2026 Peter Birkholm-Buch
+
+Licensed under Apache License 2.0 subject to Commons Clause License Condition
+v1.0. The complete combined terms are in LICENSE; this is source-available
+software, not an unrestricted Apache-2.0 or OSI-open-source distribution.
+
+Third-party components retain their own licenses. The project's Commons Clause
+restriction does not replace or restrict the independent rights granted by
+those third-party licenses. See THIRD-PARTY-NOTICES.md, licenses/ and SBOM.cdx.json
+in each release archive.
+
+Dinero CLI is an independent project. This license grants no rights to Dinero's
+or Visma's trademarks, API services or data. Use of their services remains
+subject to their respective terms.

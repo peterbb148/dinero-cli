@@ -42,6 +42,7 @@ jobs:
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           enable-cache: false
+          version: "0.9.22" # Python download catalog matches reviewed 20251217 runtimes
       - name: Select native Python and install locked build dependencies
         env:
           PYTHON_PLATFORM: ${{ matrix.python-platform }}

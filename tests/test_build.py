@@ -131,6 +131,7 @@ def test_packaging_restores_source_and_archives_real_binary(tmp_path, monkeypatc
 
     monkeypatch.setattr(build.subprocess, "run", freezer)
     monkeypatch.setattr(build, "smoke", lambda *args: None)
+    monkeypatch.setattr("scripts.notices.collect", lambda *args: {"LICENSE": b"License"})
     archive = build.build("0.1.0", "linux-x86_64")
     assert path.read_text() == "original"
     with zipfile.ZipFile(archive) as bundle:
@@ -177,3 +178,13 @@ def test_windows_emulation_reports_interpreter_architecture(monkeypatch):
     monkeypatch.setattr(build.platform, "machine", lambda: "ARM64")
     monkeypatch.setattr(build.sysconfig, "get_platform", lambda: "win-amd64")
     assert build.native_target() == "windows-x86_64"
+
+
+def test_windows_freezer_cannot_collect_dlls_from_other_runner_software(monkeypatch):
+    monkeypatch.setenv("SystemRoot", "C:/Windows")
+    monkeypatch.setenv("PATH", "unrelated-java-runtime")
+    environment = build.freezer_environment("windows-x86_64")
+    assert "unrelated-java-runtime" not in environment["PATH"]
+    assert "System32" in environment["PATH"]
+    assert sys.base_prefix in environment["PATH"]
+    assert build.freezer_environment("linux-x86_64")["PATH"] == "unrelated-java-runtime"
