@@ -93,7 +93,7 @@ def get(
     organization: Organization = None,
     json_output: Json = False,
 ) -> None:
-    """Read a voucher and its current Timestamp."""
+    """Read an invoice and its current Timestamp."""
     execute("GET", f"/v1/{{organizationId}}/invoices/{guid}", organization, json_output)
 
 
@@ -143,7 +143,7 @@ def update(
     organization: Organization = None,
     json_output: Json = False,
 ) -> None:
-    """Update the supplied voucher. No hidden read/merge or Timestamp refresh.
+    """Update the supplied invoice. No hidden read/merge or Timestamp refresh.
 
     Required JSON fields: ProductLines, Timestamp.
     Use --input FILE or --input - for nested lines and other API fields.
@@ -172,7 +172,7 @@ def delete(
     organization: Organization = None,
     json_output: Json = False,
 ) -> None:
-    """Delete the voucher (destructive). No prompt, automatic retry or Timestamp refresh.
+    """Delete the invoice (destructive). No prompt, automatic retry or Timestamp refresh.
 
     Required JSON fields: none (Timestamp can be supplied explicitly).
     Use --input FILE or --input - for nested lines and other API fields.
@@ -195,7 +195,7 @@ def book(
     organization: Organization = None,
     json_output: Json = False,
 ) -> None:
-    """Book the voucher into the accounts. Financial mutation; no retry or automatic send.
+    """Book the invoice into the accounts. Financial mutation; no retry or automatic send.
 
     Required JSON fields: Timestamp.
     Use --input FILE or --input - for nested lines and other API fields.

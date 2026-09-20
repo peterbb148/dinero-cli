@@ -10,7 +10,13 @@ from resource_cases import BASE, GUID, LIST, contract
 
 from devtools.contracts import Contract
 
-LINE = {"AccountNumber": 1000, "BaseAmountValue": 120, "Discount": 0, "Quantity": 1}
+LINE = {
+    "AccountNumber": 1000,
+    "BaseAmountValue": 120,
+    "Discount": 0,
+    "Quantity": 1,
+    "Description": "Æble",
+}
 PAYLOADS = {
     ("invoices", "create"): {"ProductLines": [LINE]},
     ("invoices", "update"): {"ProductLines": [LINE], "Timestamp": "stamp"},
@@ -29,7 +35,7 @@ PAYLOADS = {
 def with_body(setup, body):
     with setup():
         path = Path("contract-voucher.json")
-        path.write_text(json.dumps(body))
+        path.write_text(json.dumps(body, ensure_ascii=False), encoding="utf-8")
         try:
             yield
         finally:

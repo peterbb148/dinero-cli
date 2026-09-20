@@ -93,10 +93,10 @@ def arguments(group, verb):
 def test_exact_voucher_operation(wire, tmp_path, group, verb, method, path, body, stdin):
     runner, calls = wire
     args = arguments(group, verb)
-    source = json.dumps(body)
+    source = json.dumps(body, ensure_ascii=False)
     if body is not None:
         p = tmp_path / "voucher.json"
-        p.write_text(source)
+        p.write_text(source, encoding="utf-8")
         args += ["--input", "-" if stdin else str(p)]
     result = runner.invoke(app, args, input=source if stdin and body is not None else None)
     assert result.exit_code == 0, result.stderr
@@ -193,7 +193,9 @@ def test_invalid_voucher_input_sends_nothing(wire, group, verb, body, args):
     cmd = arguments(group, verb) + args
     if body is not None:
         cmd += ["--input", "-"]
-    result = runner.invoke(app, cmd, input=json.dumps(body) if body is not None else None)
+    result = runner.invoke(
+        app, cmd, input=json.dumps(body, ensure_ascii=False) if body is not None else None
+    )
     assert result.exit_code == 2 and not calls and not result.stdout
 
 
@@ -222,7 +224,9 @@ def test_financial_failure_never_retries(
         "APIClient",
         lambda settings: APIClient(settings, auth=Auth(), transport=httpx.MockTransport(respond)),
     )
-    result = runner.invoke(app, arguments(group, verb) + ["--input", "-"], input=json.dumps(body))
+    result = runner.invoke(
+        app, arguments(group, verb) + ["--input", "-"], input=json.dumps(body, ensure_ascii=False)
+    )
     assert result.exit_code == (5 if failure == "timeout" else 4)
     assert not result.stdout and len(calls) == 1
     assert calls[0].method == method and calls[0].url.path == path
@@ -270,6 +274,6 @@ def test_convenience_options_merge_with_nested_json(wire, group, verb):
     if verb == "update":
         args += ["--timestamp", STAMP]
         expected["Timestamp"] = STAMP
-    result = runner.invoke(app, args, input=json.dumps(body))
+    result = runner.invoke(app, args, input=json.dumps(body, ensure_ascii=False))
     assert result.exit_code == 0, result.stderr
     assert json.loads(calls[0].content) == expected

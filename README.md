@@ -4,8 +4,8 @@ A Python/Typer CLI distributed as standalone Windows and Linux executables.
 This milestone implements configuration, protected credential storage, Visma and personal API-key authorization,
 dedicated organizations/contacts/products commands, the manual JSON API escape hatch and CD.
 Entries, account views, accounting years, VAT types and document metadata also have dedicated
-read commands. Invoices and purchase vouchers have explicit draft, update, delete and book commands; invoice
-email delivery is a separate send operation.
+read commands. Invoices support list/get/create/update/delete/book/send; purchase vouchers support
+get/create/update/delete/book. Creating a draft, booking it and emailing an invoice are separate operations.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
 Use [dinero api](docs/api-command.md) for JSON endpoints through the
 [shared async HTTP client](docs/http-client.md).
