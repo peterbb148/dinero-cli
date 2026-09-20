@@ -145,12 +145,12 @@ dinero config set credential-backend file
 dinero config set organization 123
 dinero auth login-personal --input /private/path/personal.json --json
 dinero auth status --json
-dinero api get '/v1/{organizationId}/contacts' --json
+dinero contacts list --json
 ```
 
 `login-personal --organization 123` can override the default for that invocation, but does
-not save a default: subsequent API calls must also select that organization. Status with
-no matching saved/environment organization reports `configuration_matches: false`.
+not save a default: subsequent API calls must also select that organization. Status without a selected organization still matches the personal authorization, enabling
+`organizations list`. A different selected organization reports `configuration_matches: false`.
 A personal status includes `method: "personal"` and `organization` in addition to the usual
 safe fields. `refresh_available` means the stored API key can request a new grant; personal
 integration has no OAuth refresh token. The provider's `refresh_token` response field is ignored,

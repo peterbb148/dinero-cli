@@ -271,3 +271,21 @@ def test_personal_missing_saved_key_cannot_fall_back_to_visma(personal):
     with pytest.raises(CLIError) as failure:
         service.access_token()
     assert failure.value.code == 3 and len(requests) == 1
+
+
+def test_personal_organization_discovery_without_default(personal):
+    service, _ = personal
+    service.login_personal(parse_credentials(VALUES))
+    service.settings.organization = None
+    calls = []
+
+    def respond(request):
+        calls.append(request)
+        return httpx.Response(200, json=[{"id": 123}])
+
+    client = APIClient(service.settings, auth=service, transport=httpx.MockTransport(respond))
+    assert asyncio.run(client.request("GET", "/v1/organizations")) == [{"id": 123}]
+    assert service.status()["configuration_matches"]
+    with pytest.raises(CLIError):
+        asyncio.run(client.request("GET", "/v1/456/contacts"))
+    assert len(calls) == 1

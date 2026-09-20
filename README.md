@@ -2,7 +2,8 @@
 
 A Python/Typer CLI distributed as standalone Windows and Linux executables.
 This milestone implements configuration, protected credential storage, Visma and personal API-key authorization,
-the JSON API escape hatch and CD. Dedicated accounting resource commands are still planned.
+dedicated organizations/contacts/products commands, the manual JSON API escape hatch and CD.
+Invoices, purchase vouchers and entries commands remain planned.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
 Use [dinero api](docs/api-command.md) for JSON endpoints through the
 [shared async HTTP client](docs/http-client.md).
@@ -115,7 +116,7 @@ For each new command:
 
 The checker exercises redirected human/JSON output with normal and forced-colour settings.
 Its adversarial tests prove that missing `--json`, noise/ANSI, wrong streams/status,
-changed payloads and unregistered commands fail. Today the CLI has **twelve data commands** under `config`, `auth` and `api`;
+changed payloads and unregistered commands fail. Today the CLI has **23 data commands** under `config`, `auth`, `api`, `organizations`, `contacts` and `products`;
 help/version and Typer completion remain control surfaces. Completion callbacks run with shell
 lookup/installation mocked. These tests do not prove visual quality, every possible secret
 path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations
@@ -147,7 +148,7 @@ to be present in that release.
 [skills/dinero/SKILL.md](skills/dinero/SKILL.md) is a harness-independent instruction layer
 for the installed CLI. It covers help discovery, JSON, authorization, organization selection,
 payloads and safe reads/writes. It describes the implemented commands, including personal API-key login;
-dedicated resource commands are discovered through help when later versions add them.
+use dedicated resource commands discovered through help; raw API use is not an agent workflow.
 
 Copy the `skills/dinero` directory into your harness's skill directory, or symlink it:
 
@@ -165,3 +166,10 @@ New-Item -ItemType SymbolicLink -Path C:\your\harness\skills\dinero `
 Keep the checkout in place when using a symlink. The skill does not install the binary, configure an account or authorize writes.
 Follow the [installation](docs/installation.md), [OAuth/headless](docs/authentication.md) and
 [Bash/PowerShell API examples](docs/api-command.md) for those separate steps.
+
+## Dedicated resource commands
+
+Use `dinero organizations list --json`, `dinero contacts --help` and `dinero products --help`.
+Contacts and products support list/get/create/update/delete, organization overrides, human output,
+and `--json`. Agents must use dedicated commands; missing functionality requires a dedicated
+command before use. See [resource usage](docs/resources.md) and the generic skill.
