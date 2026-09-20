@@ -12,6 +12,14 @@ from dinero_cli.redaction import redact
 TOKEN = "https://authz.dinero.dk/dineroapi/oauth/token"
 
 
+class PersonalGrant(BaseModel):
+    """Validate access-token fields; personal grants never use OAuth refresh tokens."""
+
+    access_token: SecretStr = Field(repr=False, min_length=1)
+    expires_in: float = Field(gt=0, allow_inf_nan=False)
+    token_type: str
+
+
 class PersonalCredentials(BaseModel):
     """Private credentials supplied by Dinero for a single organization's API key."""
 

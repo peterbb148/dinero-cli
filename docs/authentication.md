@@ -153,7 +153,8 @@ not save a default: subsequent API calls must also select that organization. Sta
 no matching saved/environment organization reports `configuration_matches: false`.
 A personal status includes `method: "personal"` and `organization` in addition to the usual
 safe fields. `refresh_available` means the stored API key can request a new grant; personal
-integration has no OAuth refresh token. Status itself does not make a network request.
+integration has no OAuth refresh token. The provider's `refresh_token` response field is ignored,
+including empty values. Status itself does not make a network request.
 
 The CLI sends the documented Basic-authenticated, URL-encoded password grant to Dinero's
 fixed HTTPS token endpoint. It saves the API key, personal client secret and returned access
