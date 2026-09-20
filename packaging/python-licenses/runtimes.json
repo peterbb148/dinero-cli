@@ -1,0 +1,3088 @@
+{
+  "linux-arm64": {
+    "build": "20251217",
+    "extensions": {
+      "_abc": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ast": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_asyncio": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bisect": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_blake2": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bz2": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "bzip2-1.0.6"
+          ],
+          "links": [
+            {
+              "name": "bz2",
+              "path_static": "build/lib/libbz2.a"
+            }
+          ]
+        }
+      ],
+      "_codecs": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_cn": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_hk": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_iso2022": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_jp": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_kr": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_tw": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_collections": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_contextvars": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_csv": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ctypes": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "dl",
+              "system": true
+            },
+            {
+              "name": "ffi",
+              "path_static": "build/lib/libffi.a"
+            }
+          ]
+        }
+      ],
+      "_ctypes_test": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_curses": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            }
+          ]
+        }
+      ],
+      "_curses_panel": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            },
+            {
+              "name": "panelw",
+              "path_static": "build/lib/libpanelw.a"
+            }
+          ]
+        }
+      ],
+      "_datetime": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_dbm": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Sleepycat"
+          ],
+          "links": [
+            {
+              "name": "db",
+              "path_static": "build/lib/libdb.a"
+            }
+          ]
+        }
+      ],
+      "_decimal": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-2-Clause"
+          ],
+          "links": [
+            {
+              "name": "mpdec",
+              "path_static": "build/lib/libmpdec.a"
+            }
+          ]
+        }
+      ],
+      "_elementtree": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "expat",
+              "path_static": "build/lib/libexpat.a"
+            }
+          ]
+        }
+      ],
+      "_functools": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_hashlib": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Apache-2.0",
+            "OpenSSL"
+          ],
+          "links": [
+            {
+              "name": "crypto",
+              "path_static": "build/lib/libcrypto.a"
+            }
+          ]
+        }
+      ],
+      "_heapq": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_imp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpchannels": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_interpqueues": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_interpreters": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_io": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_json": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_locale": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_lsprof": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_lzma": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "0BSD"
+          ],
+          "links": [
+            {
+              "name": "lzma",
+              "path_static": "build/lib/liblzma.a"
+            }
+          ]
+        }
+      ],
+      "_md5": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_multibytecodec": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_multiprocessing": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_opcode": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_operator": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_pickle": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_posixshmem": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "rt",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_posixsubprocess": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_queue": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_random": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha1": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha2": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha3": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_signal": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_socket": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sqlite3": [
+        {
+          "in_core": false,
+          "license_public_domain": true,
+          "licenses": [],
+          "links": [
+            {
+              "name": "sqlite3",
+              "path_static": "build/lib/libsqlite3.a"
+            }
+          ]
+        }
+      ],
+      "_sre": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ssl": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Apache-2.0",
+            "OpenSSL"
+          ],
+          "links": [
+            {
+              "name": "crypto",
+              "path_static": "build/lib/libcrypto.a"
+            },
+            {
+              "name": "ssl",
+              "path_static": "build/lib/libssl.a"
+            }
+          ]
+        }
+      ],
+      "_stat": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_statistics": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_string": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_struct": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_suggestions": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_symtable": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sysconfig": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testbuffer": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testexternalinspection": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testimportmultiple": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testinternalcapi": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testmultiphase": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testsinglephase": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_thread": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_tkinter": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT",
+            "TCL",
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "X11",
+              "path_static": "build/lib/libX11.a"
+            },
+            {
+              "name": "Xau",
+              "path_static": "build/lib/libXau.a"
+            },
+            {
+              "name": "tcl8.6",
+              "system": true
+            },
+            {
+              "name": "tk8.6",
+              "system": true
+            },
+            {
+              "name": "xcb",
+              "path_static": "build/lib/libxcb.a"
+            }
+          ]
+        }
+      ],
+      "_tokenize": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tracemalloc": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_typing": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_uuid": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-3-Clause"
+          ],
+          "links": [
+            {
+              "name": "uuid",
+              "path_static": "build/lib/libuuid.a"
+            }
+          ]
+        }
+      ],
+      "_warnings": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_weakref": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_xxtestfuzz": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_zoneinfo": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "array": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "atexit": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "binascii": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "builtins": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "cmath": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "errno": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "faulthandler": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "fcntl": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "gc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "grp": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "itertools": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "marshal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "math": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "mmap": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "posix": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "pwd": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "pyexpat": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "expat",
+              "path_static": "build/lib/libexpat.a"
+            }
+          ]
+        }
+      ],
+      "readline": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-3-Clause",
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "edit",
+              "path_static": "build/lib/libedit.a"
+            },
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            }
+          ]
+        }
+      ],
+      "resource": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "select": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "sys": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "syslog": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "termios": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "time": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "unicodedata": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "xxsubtype": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "zlib": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Zlib"
+          ],
+          "links": [
+            {
+              "name": "z",
+              "path_static": "build/lib/libz.a"
+            }
+          ]
+        }
+      ]
+    },
+    "licenses": [
+      "3bdff06e69991c94664f2ef5c5f8096f60b7dbec071756ea6cc26b445e06ec5b-LICENSE.bdb.txt",
+      "1f38bbc7caacafd65169276d759c0d88c991b753b643ce35d0e45ea1971dd441-LICENSE.bzip2.txt",
+      "86e61415828a8b5b06ec8d024e6f086ce155a8b85fd0c419c0ba4dc004e74fdd-LICENSE.cpython.txt",
+      "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534-LICENSE.expat.txt",
+      "2daec087a88e7c9b8082557cdeebad5bbb8155a4137472f0b22e269cd99d0c1e-LICENSE.libX11.txt",
+      "56abe29bb1d9806a9e04fa9f80fed2c0f18027594df3f098148d814aef6bddfa-LICENSE.libXau.txt",
+      "29cea33c32bbc9785142386377915612a2fa786482c46843383384aded2e09b1-LICENSE.libedit.txt",
+      "deaf3a42effb551a5b140fa9afefed183a27f1341c6d1bf430d106a5e6931fc0-LICENSE.libffi.txt",
+      "9a4062de0a2c388a98cf35a35d348b62fa97c838a71c3c28ee1a2d7d0a565b02-LICENSE.liblzma.txt",
+      "122ee1f7e258f2c3c0e538a75c037684f420454bf3850ddc74ce750bbf5fe86b-LICENSE.libuuid.txt",
+      "c5ffbfeaa501071ceeb97b7de2c0d703fdaa35de01c0fb6cbac1c28453a3e9fd-LICENSE.libxcb.txt",
+      "669512af7219f58be03a398766d7c9da11a3b3df9d3f05cb74c5ceca25c8da3b-LICENSE.mpdecimal.txt",
+      "87a4c4442337b8968ef956031c406b74f9cb7149b7ba87311bdaba534816201c-LICENSE.ncurses.txt",
+      "9c04cce50c4989d5601dd8b07f6ab922c40388b66ac736c9007cb1ed9d9dd560-LICENSE.openssl-1.1.txt",
+      "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a-LICENSE.openssl-3.txt",
+      "38bef3d28b24f145ea293bd3b6eb4b20396982abc8303128fb493986ea5bc719-LICENSE.sqlite.txt",
+      "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16-LICENSE.tcl.txt",
+      "3ac5cdd0bef6c43ce34c6a7ced452081d9e5a0bf94082b9f9147d23ec9e214f5-LICENSE.tix.txt",
+      "818922b2620f12801a12bf78e399644a30990e66824abd8ca8ec24d451d6f92c-LICENSE.zlib.txt"
+    ],
+    "sha256": "332d76b8dbcd1d9cf9b18479152869cbb864c69a9d18ef2c75c2ad33200be786",
+    "triple": "aarch64-unknown-linux-gnu",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20251217/cpython-3.13.11%2B20251217-aarch64-unknown-linux-gnu-pgo%2Blto-full.tar.zst",
+    "version": "3.13.11"
+  },
+  "linux-x86_64": {
+    "build": "20251217",
+    "extensions": {
+      "_abc": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ast": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_asyncio": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bisect": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_blake2": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bz2": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "bzip2-1.0.6"
+          ],
+          "links": [
+            {
+              "name": "bz2",
+              "path_static": "build/lib/libbz2.a"
+            }
+          ]
+        }
+      ],
+      "_codecs": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_cn": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_hk": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_iso2022": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_jp": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_kr": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_codecs_tw": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_collections": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_contextvars": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_csv": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ctypes": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "dl",
+              "system": true
+            },
+            {
+              "name": "ffi",
+              "path_static": "build/lib/libffi.a"
+            }
+          ]
+        }
+      ],
+      "_ctypes_test": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_curses": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            }
+          ]
+        }
+      ],
+      "_curses_panel": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            },
+            {
+              "name": "panelw",
+              "path_static": "build/lib/libpanelw.a"
+            }
+          ]
+        }
+      ],
+      "_datetime": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_dbm": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Sleepycat"
+          ],
+          "links": [
+            {
+              "name": "db",
+              "path_static": "build/lib/libdb.a"
+            }
+          ]
+        }
+      ],
+      "_decimal": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-2-Clause"
+          ],
+          "links": [
+            {
+              "name": "mpdec",
+              "path_static": "build/lib/libmpdec.a"
+            }
+          ]
+        }
+      ],
+      "_elementtree": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "expat",
+              "path_static": "build/lib/libexpat.a"
+            }
+          ]
+        }
+      ],
+      "_functools": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_hashlib": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Apache-2.0",
+            "OpenSSL"
+          ],
+          "links": [
+            {
+              "name": "crypto",
+              "path_static": "build/lib/libcrypto.a"
+            }
+          ]
+        }
+      ],
+      "_heapq": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_imp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpchannels": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_interpqueues": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_interpreters": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_io": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_json": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_locale": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_lsprof": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_lzma": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "0BSD"
+          ],
+          "links": [
+            {
+              "name": "lzma",
+              "path_static": "build/lib/liblzma.a"
+            }
+          ]
+        }
+      ],
+      "_md5": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_multibytecodec": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_multiprocessing": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_opcode": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_operator": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_pickle": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_posixshmem": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "rt",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_posixsubprocess": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_queue": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_random": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha1": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha2": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sha3": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_signal": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_socket": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sqlite3": [
+        {
+          "in_core": false,
+          "license_public_domain": true,
+          "licenses": [],
+          "links": [
+            {
+              "name": "sqlite3",
+              "path_static": "build/lib/libsqlite3.a"
+            }
+          ]
+        }
+      ],
+      "_sre": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_ssl": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Apache-2.0",
+            "OpenSSL"
+          ],
+          "links": [
+            {
+              "name": "crypto",
+              "path_static": "build/lib/libcrypto.a"
+            },
+            {
+              "name": "ssl",
+              "path_static": "build/lib/libssl.a"
+            }
+          ]
+        }
+      ],
+      "_stat": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_statistics": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_string": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_struct": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_suggestions": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_symtable": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_sysconfig": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testbuffer": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testexternalinspection": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testimportmultiple": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testinternalcapi": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testmultiphase": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_testsinglephase": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_thread": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_tkinter": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT",
+            "TCL",
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "X11",
+              "path_static": "build/lib/libX11.a"
+            },
+            {
+              "name": "Xau",
+              "path_static": "build/lib/libXau.a"
+            },
+            {
+              "name": "tcl8.6",
+              "system": true
+            },
+            {
+              "name": "tk8.6",
+              "system": true
+            },
+            {
+              "name": "xcb",
+              "path_static": "build/lib/libxcb.a"
+            }
+          ]
+        }
+      ],
+      "_tokenize": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tracemalloc": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_typing": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_uuid": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-3-Clause"
+          ],
+          "links": [
+            {
+              "name": "uuid",
+              "path_static": "build/lib/libuuid.a"
+            }
+          ]
+        }
+      ],
+      "_warnings": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_weakref": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_xxtestfuzz": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_zoneinfo": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "array": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "atexit": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "binascii": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "builtins": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "cmath": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "errno": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "faulthandler": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "fcntl": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "gc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "grp": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "itertools": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "marshal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "math": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "m",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "mmap": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "posix": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "pwd": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "pyexpat": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "expat",
+              "path_static": "build/lib/libexpat.a"
+            }
+          ]
+        }
+      ],
+      "readline": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "BSD-3-Clause",
+            "X11"
+          ],
+          "links": [
+            {
+              "name": "edit",
+              "path_static": "build/lib/libedit.a"
+            },
+            {
+              "name": "ncursesw",
+              "path_static": "build/lib/libncursesw.a"
+            }
+          ]
+        }
+      ],
+      "resource": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "select": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "sys": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "syslog": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "termios": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "time": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "unicodedata": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "xxsubtype": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "zlib": [
+        {
+          "in_core": false,
+          "license_public_domain": false,
+          "licenses": [
+            "Zlib"
+          ],
+          "links": [
+            {
+              "name": "z",
+              "path_static": "build/lib/libz.a"
+            }
+          ]
+        }
+      ]
+    },
+    "licenses": [
+      "3bdff06e69991c94664f2ef5c5f8096f60b7dbec071756ea6cc26b445e06ec5b-LICENSE.bdb.txt",
+      "1f38bbc7caacafd65169276d759c0d88c991b753b643ce35d0e45ea1971dd441-LICENSE.bzip2.txt",
+      "86e61415828a8b5b06ec8d024e6f086ce155a8b85fd0c419c0ba4dc004e74fdd-LICENSE.cpython.txt",
+      "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534-LICENSE.expat.txt",
+      "2daec087a88e7c9b8082557cdeebad5bbb8155a4137472f0b22e269cd99d0c1e-LICENSE.libX11.txt",
+      "56abe29bb1d9806a9e04fa9f80fed2c0f18027594df3f098148d814aef6bddfa-LICENSE.libXau.txt",
+      "29cea33c32bbc9785142386377915612a2fa786482c46843383384aded2e09b1-LICENSE.libedit.txt",
+      "deaf3a42effb551a5b140fa9afefed183a27f1341c6d1bf430d106a5e6931fc0-LICENSE.libffi.txt",
+      "9a4062de0a2c388a98cf35a35d348b62fa97c838a71c3c28ee1a2d7d0a565b02-LICENSE.liblzma.txt",
+      "122ee1f7e258f2c3c0e538a75c037684f420454bf3850ddc74ce750bbf5fe86b-LICENSE.libuuid.txt",
+      "c5ffbfeaa501071ceeb97b7de2c0d703fdaa35de01c0fb6cbac1c28453a3e9fd-LICENSE.libxcb.txt",
+      "669512af7219f58be03a398766d7c9da11a3b3df9d3f05cb74c5ceca25c8da3b-LICENSE.mpdecimal.txt",
+      "87a4c4442337b8968ef956031c406b74f9cb7149b7ba87311bdaba534816201c-LICENSE.ncurses.txt",
+      "9c04cce50c4989d5601dd8b07f6ab922c40388b66ac736c9007cb1ed9d9dd560-LICENSE.openssl-1.1.txt",
+      "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a-LICENSE.openssl-3.txt",
+      "38bef3d28b24f145ea293bd3b6eb4b20396982abc8303128fb493986ea5bc719-LICENSE.sqlite.txt",
+      "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16-LICENSE.tcl.txt",
+      "3ac5cdd0bef6c43ce34c6a7ced452081d9e5a0bf94082b9f9147d23ec9e214f5-LICENSE.tix.txt",
+      "818922b2620f12801a12bf78e399644a30990e66824abd8ca8ec24d451d6f92c-LICENSE.zlib.txt"
+    ],
+    "sha256": "e8d8fffd65441aec74fb58e8ee8cbde1d7096468c0799cb4a8bd922cb5c1dd89",
+    "triple": "x86_64-unknown-linux-gnu",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20251217/cpython-3.13.11%2B20251217-x86_64-unknown-linux-gnu-pgo%2Blto-full.tar.zst",
+    "version": "3.13.11"
+  },
+  "windows-arm64": {
+    "build": "20251217",
+    "extensions": {
+      "_abc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ast": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_asyncio": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bisect": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_blake2": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_bz2": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "bzip2-1.0.6"
+          ],
+          "links": []
+        }
+      ],
+      "_codecs": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_cn": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_hk": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_iso2022": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_jp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_kr": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_tw": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_collections": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_contextvars": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_csv": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ctypes": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "libffi-8",
+              "path_dynamic": "install/DLLs/libffi-8.dll"
+            }
+          ]
+        }
+      ],
+      "_datetime": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_decimal": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_elementtree": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_functools": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_hashlib": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "Apache-2.0"
+          ],
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_heapq": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_imp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpchannels": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpqueues": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpreters": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_io": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_json": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_locale": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_lsprof": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_lzma": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "0BSD"
+          ],
+          "links": []
+        }
+      ],
+      "_md5": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_multibytecodec": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_multiprocessing": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_opcode": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_operator": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_overlapped": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_pickle": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_queue": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_random": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha1": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha2": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha3": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_signal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_socket": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "Rpcrt4",
+              "system": true
+            },
+            {
+              "name": "iphlpapi",
+              "system": true
+            },
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_sqlite3": [
+        {
+          "in_core": false,
+          "license_public_domain": true,
+          "licenses": [],
+          "links": [
+            {
+              "name": "sqlite3",
+              "path_dynamic": "install/DLLs/sqlite3.dll"
+            }
+          ]
+        }
+      ],
+      "_sre": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ssl": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "Apache-2.0"
+          ],
+          "links": [
+            {
+              "name": "crypt32",
+              "system": true
+            },
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_stat": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_statistics": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_string": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_struct": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_suggestions": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_symtable": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sysconfig": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_thread": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tkinter": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "TCL"
+          ],
+          "links": [
+            {
+              "name": "$(tcltk",
+              "system": true
+            },
+            {
+              "name": "tcl86t",
+              "path_dynamic": "install/DLLs/tcl86t.dll"
+            },
+            {
+              "name": "tk86t",
+              "path_dynamic": "install/DLLs/tk86t.dll"
+            }
+          ]
+        }
+      ],
+      "_tokenize": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tracemalloc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_typing": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_uuid": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "BSD-3-Clause"
+          ],
+          "links": [
+            {
+              "name": "rpcrt4",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_warnings": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_weakref": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_winapi": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_wmi": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "propsys",
+              "system": true
+            },
+            {
+              "name": "wbemuuid",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_zoneinfo": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "array": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "atexit": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "binascii": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "builtins": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "cmath": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "errno": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "faulthandler": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "gc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "itertools": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "marshal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "math": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "mmap": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "msvcrt": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "nt": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "pyexpat": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "select": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "sys": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "time": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "unicodedata": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "winreg": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "winsound": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "winmm",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "xxsubtype": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "zlib": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ]
+    },
+    "licenses": [
+      "8f2d533ab34899499d5b07f209854b101b17dba2c69f3251860aecf3e4005faa-LICENSE.bdb.txt",
+      "bd5628cc76fb0ebf9c657d1dd4d1a240a1a7b216c31663e7bbf1131c0b70a910-LICENSE.bzip2.txt",
+      "8fe98bf9822926d854f56ffd8d97877d8b942617aa44eb7ea77fd99e22f2537e-LICENSE.cpython.txt",
+      "8a9cfe4b5924f4b25881aa0c9f5e4561c5f31065d0c4a13cdcdbcf917edf39aa-LICENSE.expat.txt",
+      "f353accfe2976df31ea297a77d1d454bd51ef6be8c3df39bd6aca95901579357-LICENSE.libX11.txt",
+      "cec808cd2163fccdc8de4a91d526490777afbaeea060e1168c40a804694b7444-LICENSE.libXau.txt",
+      "d9932ccdd42eccf6cdded7bcb35b088e64cfc7c24d355af2cc0d02edb6b637d3-LICENSE.libedit.txt",
+      "9afb8970cd29fc1031fa647278e4bef613399e2e3468a1e3a397f4d158c6101c-LICENSE.libffi.txt",
+      "d87d218dd908b3243ec4cbc72af400e5b7437513ea9d9229291d0812b8464fec-LICENSE.liblzma.txt",
+      "cbccaa3efe07a9a602751375085be572d4410a250b996716fbe8c5255c7ec6f2-LICENSE.libuuid.txt",
+      "29a9539190e6de1af5fd06a9139c7103137cd1f9290b08c7b11bce89c01c14d2-LICENSE.libxcb.txt",
+      "f094277cd46e1f6e4d87916cc4b51e22f613d45eb81f48231c3cb7caf8fc8a6a-LICENSE.mpdecimal.txt",
+      "4f571cad3ea6c888bf0a7092e5b215dddb3142e9e3f1857fd5fac6cf13d345d7-LICENSE.ncurses.txt",
+      "ad89e3fed746413af1d34d5353978ee1520cedd361c853f8022e7bb210ac6b31-LICENSE.openssl-1.1.txt",
+      "ed72ce2b51ee58f117e5a021e2e04af158857f40269fbc03491f0b2a99dbcc96-LICENSE.openssl-3.txt",
+      "d8eb9aba7ef6b5ed06cb3ec19a7242316af2e5933c638eb67fb781c13884e01d-LICENSE.sqlite.txt",
+      "41613eabfc08921a7da9c4bfd7f3ce5d5406f55214b253d89f392ed86eebeb8f-LICENSE.tcl.txt",
+      "8cdff3addb9e9eb108c78e2cf5e05f26b216c098304945733bbec382b2eaef66-LICENSE.tix.txt",
+      "365e36720db366054863235aea5d6f440142ab968834bfaf81fa9d187c99b9b8-LICENSE.zlib.txt"
+    ],
+    "sha256": "8b926b0e8fc976c1ad538ff6710812049bce3a079d24e75fb1c51eff50999156",
+    "triple": "aarch64-pc-windows-msvc",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20251217/cpython-3.13.11%2B20251217-aarch64-pc-windows-msvc-pgo-full.tar.zst",
+    "version": "3.13.11"
+  },
+  "windows-x86_64": {
+    "build": "20251217",
+    "extensions": {
+      "_abc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ast": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_asyncio": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_bisect": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_blake2": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_bz2": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "bzip2-1.0.6"
+          ],
+          "links": []
+        }
+      ],
+      "_codecs": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_cn": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_hk": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_iso2022": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_jp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_kr": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_codecs_tw": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_collections": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_contextvars": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_csv": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ctypes": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "MIT"
+          ],
+          "links": [
+            {
+              "name": "libffi-8",
+              "path_dynamic": "install/DLLs/libffi-8.dll"
+            }
+          ]
+        }
+      ],
+      "_datetime": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_decimal": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_elementtree": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_functools": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_hashlib": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "Apache-2.0"
+          ],
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            },
+            {
+              "name": "libcrypto-1_1-x64",
+              "path_dynamic": "install/DLLs/libcrypto-1_1-x64.dll"
+            }
+          ]
+        }
+      ],
+      "_heapq": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_imp": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpchannels": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpqueues": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_interpreters": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_io": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_json": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_locale": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_lsprof": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_lzma": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "0BSD"
+          ],
+          "links": []
+        }
+      ],
+      "_md5": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_multibytecodec": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_multiprocessing": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_opcode": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_operator": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_overlapped": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_pickle": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_queue": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "_random": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha1": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha2": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sha3": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_signal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_socket": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "Rpcrt4",
+              "system": true
+            },
+            {
+              "name": "iphlpapi",
+              "system": true
+            },
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_sqlite3": [
+        {
+          "in_core": false,
+          "license_public_domain": true,
+          "licenses": [],
+          "links": [
+            {
+              "name": "sqlite3",
+              "path_dynamic": "install/DLLs/sqlite3.dll"
+            }
+          ]
+        }
+      ],
+      "_sre": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_ssl": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "Apache-2.0"
+          ],
+          "links": [
+            {
+              "name": "crypt32",
+              "system": true
+            },
+            {
+              "name": "ws2_32",
+              "system": true
+            },
+            {
+              "name": "libcrypto-1_1-x64",
+              "path_dynamic": "install/DLLs/libcrypto-1_1-x64.dll"
+            },
+            {
+              "name": "libssl-1_1-x64",
+              "path_dynamic": "install/DLLs/libssl-1_1-x64.dll"
+            }
+          ]
+        }
+      ],
+      "_stat": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_statistics": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_string": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_struct": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_suggestions": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_symtable": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_sysconfig": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_thread": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tkinter": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "TCL"
+          ],
+          "links": [
+            {
+              "name": "$(tcltk",
+              "system": true
+            },
+            {
+              "name": "tcl86t",
+              "path_dynamic": "install/DLLs/tcl86t.dll"
+            },
+            {
+              "name": "tk86t",
+              "path_dynamic": "install/DLLs/tk86t.dll"
+            }
+          ]
+        }
+      ],
+      "_tokenize": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_tracemalloc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_typing": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_uuid": [
+        {
+          "in_core": false,
+          "license_public_domain": null,
+          "licenses": [
+            "BSD-3-Clause"
+          ],
+          "links": [
+            {
+              "name": "rpcrt4",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_warnings": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_weakref": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_winapi": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "_wmi": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "propsys",
+              "system": true
+            },
+            {
+              "name": "wbemuuid",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "_zoneinfo": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "array": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "atexit": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "binascii": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "builtins": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "cmath": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "errno": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "faulthandler": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "gc": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "itertools": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "marshal": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "math": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "mmap": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "msvcrt": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "nt": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "pyexpat": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "select": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "ws2_32",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "sys": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "time": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "unicodedata": [
+        {
+          "in_core": false,
+          "links": []
+        }
+      ],
+      "winreg": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "winsound": [
+        {
+          "in_core": false,
+          "links": [
+            {
+              "name": "winmm",
+              "system": true
+            }
+          ]
+        }
+      ],
+      "xxsubtype": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ],
+      "zlib": [
+        {
+          "in_core": true,
+          "links": []
+        }
+      ]
+    },
+    "licenses": [
+      "8f2d533ab34899499d5b07f209854b101b17dba2c69f3251860aecf3e4005faa-LICENSE.bdb.txt",
+      "bd5628cc76fb0ebf9c657d1dd4d1a240a1a7b216c31663e7bbf1131c0b70a910-LICENSE.bzip2.txt",
+      "8fe98bf9822926d854f56ffd8d97877d8b942617aa44eb7ea77fd99e22f2537e-LICENSE.cpython.txt",
+      "8a9cfe4b5924f4b25881aa0c9f5e4561c5f31065d0c4a13cdcdbcf917edf39aa-LICENSE.expat.txt",
+      "f353accfe2976df31ea297a77d1d454bd51ef6be8c3df39bd6aca95901579357-LICENSE.libX11.txt",
+      "cec808cd2163fccdc8de4a91d526490777afbaeea060e1168c40a804694b7444-LICENSE.libXau.txt",
+      "d9932ccdd42eccf6cdded7bcb35b088e64cfc7c24d355af2cc0d02edb6b637d3-LICENSE.libedit.txt",
+      "9afb8970cd29fc1031fa647278e4bef613399e2e3468a1e3a397f4d158c6101c-LICENSE.libffi.txt",
+      "d87d218dd908b3243ec4cbc72af400e5b7437513ea9d9229291d0812b8464fec-LICENSE.liblzma.txt",
+      "cbccaa3efe07a9a602751375085be572d4410a250b996716fbe8c5255c7ec6f2-LICENSE.libuuid.txt",
+      "29a9539190e6de1af5fd06a9139c7103137cd1f9290b08c7b11bce89c01c14d2-LICENSE.libxcb.txt",
+      "f094277cd46e1f6e4d87916cc4b51e22f613d45eb81f48231c3cb7caf8fc8a6a-LICENSE.mpdecimal.txt",
+      "4f571cad3ea6c888bf0a7092e5b215dddb3142e9e3f1857fd5fac6cf13d345d7-LICENSE.ncurses.txt",
+      "ad89e3fed746413af1d34d5353978ee1520cedd361c853f8022e7bb210ac6b31-LICENSE.openssl-1.1.txt",
+      "ed72ce2b51ee58f117e5a021e2e04af158857f40269fbc03491f0b2a99dbcc96-LICENSE.openssl-3.txt",
+      "d8eb9aba7ef6b5ed06cb3ec19a7242316af2e5933c638eb67fb781c13884e01d-LICENSE.sqlite.txt",
+      "41613eabfc08921a7da9c4bfd7f3ce5d5406f55214b253d89f392ed86eebeb8f-LICENSE.tcl.txt",
+      "8cdff3addb9e9eb108c78e2cf5e05f26b216c098304945733bbec382b2eaef66-LICENSE.tix.txt",
+      "365e36720db366054863235aea5d6f440142ab968834bfaf81fa9d187c99b9b8-LICENSE.zlib.txt"
+    ],
+    "sha256": "7c50d2430be16cfa3f3f65ab7e3eef0aa52d5269d637c52465f123e266f8480b",
+    "triple": "x86_64-pc-windows-msvc",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20251217/cpython-3.13.11%2B20251217-x86_64-pc-windows-msvc-pgo-full.tar.zst",
+    "version": "3.13.11"
+  }
+}
