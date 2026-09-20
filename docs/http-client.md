@@ -1,7 +1,7 @@
 # Shared HTTP client
 
-The async `APIClient` is the shared protocol service for forthcoming resource commands and
-`dinero api` (#7). This milestone does not yet expose accounting requests as CLI commands.
+The async `APIClient` is the shared protocol service for all [dedicated resource commands](resources.md)
+and the manual `dinero api` escape hatch. Agents use only the dedicated commands.
 Commands supply the HTTP method, resource path, ordered query pairs and optional JSON object;
 the service performs authentication, one HTTP operation and response/error translation.
 

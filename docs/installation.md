@@ -63,10 +63,11 @@ backend; credentials copied from another account/machine are not portable.
 
 ## First use
 
-Follow [configuration](configuration.md), then [Visma authorization](authentication.md).
-Provide your own registered OAuth application; release binaries contain no shared client
-secret. Inspect organizations with `dinero api get /v1/organizations --json`, then save the
-chosen ID using `dinero config set organization ID`. See [API usage](api-command.md).
+Follow [configuration](configuration.md), then choose [Visma or personal authorization](authentication.md).
+Visma needs your registered application; personal login needs approved personal credentials and an
+organization API key. Release binaries contain no shared client secret. Discover organizations with
+`dinero organizations list --json`. Use `--organization ID` for one command or deliberately save a
+default with `dinero config set organization ID`. See [resource usage](resources.md).
 
 ## Upgrade, rollback and uninstall
 

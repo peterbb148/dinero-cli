@@ -1,6 +1,6 @@
 ---
 name: dinero
-description: Use the Dinero CLI to inspect and change Dinero accounting data, choose organizations, manage authorization, and run JSON API operations. Use the installed dinero executable as the tool interface.
+description: Use the Dinero CLI to inspect and change Dinero accounting data, choose organizations, manage authorization, and process accounting results as JSON. Use the installed dinero executable as the tool interface.
 ---
 
 # Dinero CLI
@@ -148,7 +148,9 @@ defaults are invented. Contact booleans use explicit positive/negative flags, fo
 A field present in both JSON and an option is an error, even when values match. Unknown JSON
 fields are retained for the API. Updates require the full documented payload and never merge
 with a hidden read. Get/update/delete take a resource GUID argument; delete is destructive.
-In PowerShell prefer file input; piped input must be UTF-8.
+In PowerShell prefer UTF-8 file input; piped input must also be UTF-8. Capture `$LASTEXITCODE`
+before processing native output with `ConvertFrom-Json`; preserve failures rather than treating
+empty stdout as an empty accounting result. See the shell examples below.
 
 ## Invoices and purchase vouchers
 
@@ -219,4 +221,4 @@ package. The following project guides provide registration and endpoint details:
 - [Configuration](https://github.com/peterbb148/dinero-cli/blob/main/docs/configuration.md)
 - [OAuth and headless bootstrap](https://github.com/peterbb148/dinero-cli/blob/main/docs/authentication.md)
 - [Verified endpoint matrix](https://github.com/peterbb148/dinero-cli/blob/main/docs/api/endpoint-matrix.md)
-- [JSON escape hatch](https://github.com/peterbb148/dinero-cli/blob/main/docs/api-command.md)
+- [Dedicated commands and shell examples](https://github.com/peterbb148/dinero-cli/blob/main/docs/resources.md)

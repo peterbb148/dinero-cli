@@ -17,7 +17,7 @@ dinero config set output human
 ```
 
 Organization is a numeric ID, not an organization name or an automatically selected account.
-The eventual organization-dependent commands accept `--organization ID` for a single request.
+Organization-dependent commands accept `--organization ID` for a single request.
 `config set` changes exactly one saved field and reports the saved public value; `get` and
 `list` show resolved values, so an environment override can differ from a saved value.
 
@@ -52,7 +52,7 @@ dinero config set trusted-api-origins https://api.dinero.dk,https://example.test
 
 This is a trust decision: list only servers permitted to receive bearer credentials. The
 client must check the allowlist and token-origin binding before refresh or request (see the
-CLI contract). The current implementation exposes the shared checks for later API commands.
+CLI contract). All API commands use these shared checks.
 
 ## Local paths
 

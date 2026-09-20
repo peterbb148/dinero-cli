@@ -71,8 +71,8 @@ does not prove that a separate expense remains to be booked. No read command mut
 
 ## Invoices and purchase vouchers
 
-Invoice list/get/create/update/delete/book/send and purchase-voucher get/create/update/delete/book
-are explicit commands. There is no purchase-voucher list endpoint in the verified specification.
+Invoice list/get/create/update/delete/book/send and `purchase-vouchers get/create/update/delete/book`
+are explicit commands. There is no `purchase-vouchers list` endpoint in the verified specification.
 Invoice update uses v1.2; purchase create uses v1.2, update v1.1 and get/book/delete v1.
 `send` uses the invoice email endpoint, not EAN. Create only creates a draft.
 
@@ -110,3 +110,30 @@ dinero purchase-vouchers get GUID --organization 123 --json
 After explicit authorization and payload review, `invoices create --input invoice.json` creates the
 draft. Booking, sending and deleting require separate authorized commands; creating a draft does
 not authorize those subsequent actions. No live write is needed for testing these commands.
+
+## Shell pipelines and exit status
+
+In Bash, retain the CLI status before processing output:
+
+```sh
+if dinero contacts list --organization 123 --page 0 --page-size 100 --json > contacts.json; then
+  jq . contacts.json
+else
+  exit "$?"
+fi
+```
+
+PowerShell uses the same command/options. Capture the native status before `ConvertFrom-Json`:
+
+```powershell
+$result = dinero contacts list --organization 123 --page 0 --page-size 100 --json
+$cliExit = $LASTEXITCODE
+if ($cliExit -ne 0) { exit $cliExit }
+$result | ConvertFrom-Json
+```
+
+For authorized writes use `--input contact.json` in either shell. Files must be UTF-8; in
+Windows PowerShell 5.1 its default file encoding is unsuitable, so create the JSON in a UTF-8
+editor or explicitly select UTF-8 without a BOM. Piped input also must be UTF-8. Do not combine
+stderr with stdout before parsing JSON. The examples read only one page; inspect the original
+response metadata and request subsequent pages explicitly when needed.
