@@ -147,7 +147,7 @@ class APIClient:
             value = decode_json(response.content)
         except (ValueError, UnicodeError) as error:
             raise CLIError(
-                "API success response is not supported UTF-8 JSON.",
+                "API success response could not be decoded as UTF-8 JSON.",
                 code=5,
                 status=response.status_code,
             ) from error

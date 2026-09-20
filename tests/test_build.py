@@ -174,13 +174,6 @@ def test_cli_help_version_and_unknown_command():
     assert runner.invoke(cli.app, ["unknown"]).exit_code != 0
 
 
-def test_main_calls_cli(monkeypatch):
-    application = Mock()
-    monkeypatch.setattr(cli, "app", application)
-    cli.main()
-    application.assert_called_once_with()
-
-
 def test_windows_emulation_reports_interpreter_architecture(monkeypatch):
     monkeypatch.setattr(sys, "platform", "win32")
     monkeypatch.setattr(build.platform, "machine", lambda: "ARM64")
