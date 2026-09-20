@@ -3,7 +3,8 @@
 Verified against [Dinero OpenAPI](https://api.dinero.dk/openapi/v1/swagger.json) on 2026-09-20.
 The checked structural extraction is [endpoint-matrix.json](endpoint-matrix.json); it records the
 source SHA-256, exact query names/types/defaults, path arguments and request field inventories.
-This specifies the planned first resource release; these commands are not implemented yet.
+Organizations, contacts and products are implemented. Invoice, purchase-voucher and entry
+commands below remain planned.
 
 `{organizationId}` is resolved from `--organization` or configuration, never an implicit account.
 `{guid}` is a positional resource GUID. All other path parameters remain positional.

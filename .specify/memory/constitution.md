@@ -8,7 +8,9 @@ The CLI MUST own authentication, HTTP, request construction and deterministic ex
 It MUST preserve Dinero resource names, payload fields, endpoint versions and response structure.
 It MUST NOT reimplement Dinero business rules or invent uniform CRUD where the API differs.
 Path parameters MUST be arguments, query parameters MUST be options, and complex bodies MUST
-support JSON files and stdin. Prefer dedicated commands; `dinero api` is the escape hatch.
+support JSON files and stdin. Agents MUST use dedicated commands for accounting data. They MUST
+NOT use `dinero api` or reconstruct HTTP calls; a missing dedicated operation must be implemented
+before agent use. The escape hatch remains available for manual use.
 
 ### II. Human-readable default output (OUT-001)
 
@@ -118,7 +120,8 @@ an automated check MUST be called out, never hidden in a registry exemption.
 
 Constitution versions are independent of binary releases: MAJOR for incompatible rule removal or
 redefinition, MINOR for added/materially expanded requirements, PATCH for clarifications.
+Version 1.2.0 requires dedicated resource commands for agent data access (API-001).
 Version 1.1.0 adds SKILL-001 and its same-PR documentation/review obligation. Existing executable
 checks remain unchanged; semantic consistency of the skill is an explicit review responsibility.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-20 | **Last Amended**: 2026-09-20
+**Version**: 1.2.0 | **Ratified**: 2026-09-20 | **Last Amended**: 2026-09-20

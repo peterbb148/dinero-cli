@@ -18,14 +18,15 @@ The current CLI has:
 
 - `config list|get|set|set-client-secret`: local settings and protected secret input.
 - `auth login|login-personal|status|logout`: user authorization and safe status metadata.
-- `api get|post|put|delete PATH`: authenticated JSON API operations.
+- `organizations list`: discover accessible organizations.
+- `contacts list|get|create|update|delete`: contact operations.
+- `products list|get|create|update|delete`: product operations.
 
-Dedicated organizations, contacts, products, invoices, purchase vouchers and entries
-commands are planned, not yet available. Prefer dedicated resource commands when
-the installed help lists them. Use `dinero api` only for an endpoint not represented
-by a dedicated command. Do not guess paths, versions or payload schemas; use the
-project's verified endpoint documentation for that operation. If its required schema
-is unavailable, obtain it before issuing a write.
+Invoices, purchase vouchers and entries commands are planned, not yet available.
+Agents must use dedicated resource commands. Do not use `dinero api`, curl, handwritten HTTP
+or Python imports to access accounting data. If the needed operation has no dedicated command,
+report the missing capability and implement it through the repository workflow before using it.
+The executable retains an escape hatch for manual use; it is not an agent workflow.
 
 ## Authentication and organization
 
@@ -68,14 +69,15 @@ Visma authorization is user-based; personal authorization is bound to one organi
 Never select the first available organization implicitly:
 
 ```sh
-dinero api get /v1/organizations --json
+dinero organizations list --json
 dinero config get organization --json
 dinero config set organization 123 --json
 ```
 
 Save a default only when requested. For a one-off operation, use `--organization ID`.
-The API escape hatch replaces only `{organizationId}`; a path containing a literal ID
-is unchanged by an override. Verify the effective target before any financial change.
+Dedicated resource commands resolve their path from the selected organization. Verify the
+effective target before any financial change. Organization discovery also works with personal
+authorization when no default organization is set; tokens remain bound to their organization.
 
 ## Read and process data
 
@@ -84,16 +86,16 @@ on stdout, preserving the API shape. Errors are on stderr and exit nonzero. Defa
 output is for human reading; do not parse its tables.
 
 ```sh
-dinero api get '/v1/{organizationId}/contacts' --organization 123 \
-  --query page=0 --query pageSize=100 --json
+dinero contacts list --organization 123 --page 0 --page-size 100 --json
 ```
 
 Personal authorization rejects paths for another organization and ambiguous global routes;
 its only organization-free route is read-only `/v1/organizations`.
 
-Query options use exact API field names. Repeated `--query KEY=VALUE` pairs preserve
-order and duplicate keys; supply plain text and let the CLI encode it. Do not put
-query strings in PATH. Pagination is explicit; do not claim one page is all results.
+Use documented kebab-case query options such as `--query-filter`, `--changes-since`, `--fields`,
+`--page` and `--page-size`. Omitted values preserve API defaults. Pagination is explicit; one
+list invocation reads one page only. `--deleted-only` and `--no-deleted-only` send true and false;
+using both is an error. Products also support `--free-text-search`.
 
 ## Writes and complex payloads
 
@@ -110,16 +112,19 @@ validation and business rules in Dinero; do not silently alter amounts, tax or d
 Send a validated UTF-8 JSON object with original API field names and nested values:
 
 ```sh
-dinero api post '/v1/{organizationId}/invoices' --organization 123 \
-  --input invoice.json --json
-cat invoice.json | dinero api post '/v1/{organizationId}/invoices' \
-  --organization 123 --input - --json
+dinero contacts create --organization 123 --input contact.json --json
+cat product.json | dinero products create --organization 123 --input - --json
 ```
 
-These examples are mutations, not setup or discovery steps. Run them only for an
-authorized request with the appropriate payload. In PowerShell prefer `--input
-invoice.json`; pipes must emit UTF-8. GET has no body; multipart uploads, PDF/image
-responses and file streaming are not supported by the JSON escape hatch.
+These examples mutate data and require authorization. Contact create/update require `Name`,
+`CountryKey`, `IsPerson`, `IsMember`, `UseCvr`. Product create/update require `BaseAmountValue`,
+`Quantity`, `AccountNumber`, `Unit`. Supply fields in JSON or supported options; no business
+defaults are invented. Contact booleans use explicit positive/negative flags, for example
+`--no-is-person --no-is-member --no-use-cvr`. `--name` and `--email` are available for contacts.
+A field present in both JSON and an option is an error, even when values match. Unknown JSON
+fields are retained for the API. Updates require the full documented payload and never merge
+with a hidden read. Get/update/delete take a resource GUID argument; delete is destructive.
+In PowerShell prefer file input; piped input must be UTF-8.
 
 ## Handle failures
 

@@ -14,6 +14,9 @@ from dinero_cli._version import VERSION
 from dinero_cli.commands.api import app as api_app
 from dinero_cli.commands.auth import app as auth_app
 from dinero_cli.commands.config import app as config_app
+from dinero_cli.commands.contacts import app as contacts_app
+from dinero_cli.commands.organizations import app as organizations_app
+from dinero_cli.commands.products import app as products_app
 from dinero_cli.config import saved_values
 from dinero_cli.errors import CLIError
 from dinero_cli.output import OutputClosed, PipeWriter, emit_error, silence_closed_pipe
@@ -111,6 +114,9 @@ app = typer.Typer(
 app.add_typer(config_app, name="config")
 app.add_typer(auth_app, name="auth")
 app.add_typer(api_app, name="api")
+app.add_typer(organizations_app, name="organizations")
+app.add_typer(contacts_app, name="contacts")
+app.add_typer(products_app, name="products")
 
 
 @app.callback(invoke_without_command=True)

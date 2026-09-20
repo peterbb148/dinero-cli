@@ -116,7 +116,7 @@ class AuthService:
                 personal is not None
                 and record.client_id == personal.client_id
                 and record.organization == personal.organization
-                and self.settings.organization == personal.organization
+                and self.settings.organization in (None, personal.organization)
                 and record.api_origin == self.settings.api_base_url
             )
         return (

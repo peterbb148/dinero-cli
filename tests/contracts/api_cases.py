@@ -17,7 +17,7 @@ from dinero_cli.secrets import SecretStore
 
 
 @contextmanager
-def configured(value=None, status=200, transport_error=False, authorized=True):
+def configured(value=None, status=200, transport_error=False, authorized=True, module=commands):
     with fresh(), MonkeyPatch.context() as patch:
         save_setting("client-id", "contract-client")
         save_setting("credential-backend", "file")
@@ -42,7 +42,7 @@ def configured(value=None, status=200, transport_error=False, authorized=True):
             return httpx.Response(status, json=value)
 
         patch.setattr(
-            commands,
+            module,
             "APIClient",
             lambda settings: APIClient(settings, transport=httpx.MockTransport(respond)),
         )
