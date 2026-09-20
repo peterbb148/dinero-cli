@@ -1,0 +1,3 @@
+# Preserve upstream legal texts byte-for-byte, including original line endings.
+packaging/python-licenses/*.txt -text -whitespace
+packaging/python-licenses/*.rst -text -whitespace
