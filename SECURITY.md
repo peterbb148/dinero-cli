@@ -29,8 +29,10 @@ all published versions are supported. Security changes follow the normal release
 - Other findings require maintainer triage; dismissals need a documented justification.
   Copilot review supplements these controls and is not a vulnerability scanner.
 
-PR workflows do not use `pull_request_target` or execute untrusted code with repository
-write credentials. CodeQL's only elevated permission uploads SARIF results; GitHub
+PR validation workflows do not use `pull_request_target` or execute untrusted code with
+repository write credentials. The separate Copilot review gate uses `pull_request_target`
+only to inspect API metadata with trusted default-branch code and publish commit statuses;
+it never checks out PR code or downloads PR artifacts. CodeQL's only elevated permission uploads SARIF results; GitHub
 restricts fork-PR tokens and permits code-scanning uploads through its supported PR flow.
 Actions are pinned to commit SHAs, and checkout does not persist credentials. Native
 binary builds are required only when build inputs change, as defined by the PR gate.
