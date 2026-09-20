@@ -5,6 +5,7 @@ import hashlib
 import secrets
 import time
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from typing import Any
 from urllib.parse import urlencode
 
@@ -17,6 +18,25 @@ from dinero_cli.secrets import SecretStore
 
 AUTHORIZE = "https://connect.visma.com/connect/authorize"
 TOKEN = "https://connect.visma.com/connect/token"
+
+
+@dataclass(frozen=True)
+class Credentials:
+    """Internal bearer material and values that must be removed from remote diagnostics."""
+
+    access_token: str = field(repr=False)
+    redactions: tuple[str, ...] = field(repr=False)
+
+
+def credentials(
+    record: "TokenRecord", secret: SecretStr | None, *previous: SecretStr | None
+) -> Credentials:
+    """Keep credential values together without exposing them in object representations."""
+    values = (record.access_token, record.refresh_token, secret, *previous)
+    return Credentials(
+        record.access_token.get_secret_value(),
+        tuple(value.get_secret_value() for value in values if value is not None),
+    )
 
 
 class TokenRecord(BaseModel):
@@ -162,7 +182,11 @@ class AuthService:
         )
 
     def access_token(self) -> str:
-        """Return a valid token, rotating under one process lock when needed.
+        """Return only the bearer value to internal callers that do not render API errors."""
+        return self.credentials().access_token
+
+    def credentials(self) -> Credentials:
+        """Return valid bearer material, rotating under one process lock when needed.
 
         Persist a pending marker before sending a refresh grant. If the process dies or
         exchange/save fails, a later process cannot replay a potentially consumed token.
@@ -181,7 +205,7 @@ class AuthService:
                     "Previous token refresh did not complete; run auth login again.", code=3
                 )
             if record.expires_at > self.now() + 30:
-                return record.access_token.get_secret_value()
+                return credentials(record, transaction.state.client_secret)
             secret = transaction.state.client_secret
             if record.refresh_token is None or secret is None:
                 raise CLIError("Authorization cannot be refreshed; run auth login again.", code=3)
@@ -199,7 +223,7 @@ class AuthService:
             transaction.state.tokens = updated.storage()
             transaction.state.refresh_pending = False
             transaction.save()
-            return updated.access_token.get_secret_value()
+            return credentials(updated, secret, record.access_token, record.refresh_token)
 
     def login(self, callback: Callable[[str, str], str]) -> dict[str, Any]:
         """Request browser consent, validate callback state in the collector, then save tokens."""

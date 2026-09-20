@@ -4,6 +4,7 @@ A Python/Typer CLI distributed as standalone Windows and Linux executables.
 This milestone implements configuration, protected credential storage, Visma authorization and CD.
 Dinero accounting API commands are not implemented yet; see the repository issues.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
+The [shared async HTTP client](docs/http-client.md) is implemented for forthcoming API commands.
 There is no official pip/PyPI release. The project is source available under Apache-2.0 **subject to Commons Clause 1.0**;
 see [LICENSE](LICENSE). It is not licensed under unrestricted Apache-2.0.
 
