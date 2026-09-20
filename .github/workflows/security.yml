@@ -1,0 +1,63 @@
+name: Security
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  codeql:
+    name: CodeQL Python
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          languages: python
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          category: /language:python
+  dependencies:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          fail-on-scopes: runtime, development, unknown
+          comment-summary-in-pr: never
+  gate:
+    name: Security gate
+    if: always()
+    needs: [codeql, dependencies]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require successful security analysis
+        env:
+          CODEQL: ${{ needs.codeql.result }}
+          DEPENDENCIES: ${{ needs.dependencies.result }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          test "$CODEQL" = success
+          if test "$EVENT" = pull_request; then
+            test "$DEPENDENCIES" = success
+          else
+            test "$DEPENDENCIES" = skipped
+          fi
