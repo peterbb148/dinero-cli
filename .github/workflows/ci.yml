@@ -1,0 +1,69 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    name: Tests and coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - run: uv sync --locked
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync mypy
+      - run: uv run --no-sync pytest --cov --cov-report=term-missing
+  changes:
+    name: Build input detection
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      build: ${{ steps.plan.outputs.build }}
+      commit: ${{ steps.plan.outputs.commit }}
+      version: ${{ steps.plan.outputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - id: plan
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+        run: uv run --no-project python -m scripts.release pr --base "$BASE_SHA"
+  binaries:
+    needs: [checks, changes]
+    if: needs.changes.outputs.build == 'true'
+    uses: ./.github/workflows/binaries.yml
+    with:
+      commit: ${{ needs.changes.outputs.commit }}
+      version: ${{ needs.changes.outputs.version }}
+  gate:
+    name: PR gate
+    if: always()
+    needs: [checks, changes, binaries]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require checks and any requested binaries
+        env:
+          CHECKS: ${{ needs.checks.result }}
+          CHANGES: ${{ needs.changes.result }}
+          BUILD: ${{ needs.changes.outputs.build }}
+          BINARIES: ${{ needs.binaries.result }}
+        run: |
+          test "$CHECKS" = success
+          test "$CHANGES" = success
+          if test "$BUILD" = true; then
+            test "$BINARIES" = success
+          else
+            test "$BINARIES" = skipped
+          fi

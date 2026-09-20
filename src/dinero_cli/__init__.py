@@ -1,0 +1,1 @@
+"""Dinero CLI package."""
