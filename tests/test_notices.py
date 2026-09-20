@@ -17,7 +17,7 @@ def test_analysis_format_and_input_paths(tmp_path):
     values = [[] for _ in range(20)]
     values[14] = [("module", str(tmp_path / "module.py"), "PYMODULE")]
     toc.write_text(repr(values))
-    assert notices.analysis_files(toc) == [("module", tmp_path / "module.py")]
+    assert notices.analysis_files(toc) == [("module", tmp_path / "module.py", "PYMODULE")]
     toc.write_text("__import__('os').system('never')")
     with pytest.raises(ValueError):
         notices.analysis_files(toc)
@@ -88,7 +88,11 @@ def inventory(tmp_path, monkeypatch):
     for file in ("typer/core.py", "dinero_cli/_version.py"):
         files[file] = tmp_path / "packages" / file
     monkeypatch.setattr(notices.metadata, "distributions", lambda: deps)
-    monkeypatch.setattr(notices, "analysis_files", lambda p: list(files.items()))
+    monkeypatch.setattr(
+        notices,
+        "analysis_files",
+        lambda p: [(name, source, "DATA") for name, source in files.items()],
+    )
     return SimpleNamespace(executable=write("dinero"), write=write, files=files, deps=deps)
 
 
@@ -146,3 +150,14 @@ def test_vendored_runtime_notices_match_upstream_content_hashes():
     for record in records.values():
         for filename in record["licenses"]:
             assert notices.sha256(root / filename) == filename.split("-", 1)[0]
+
+
+@pytest.mark.parametrize("directory", ["src", "assets"])
+@pytest.mark.parametrize("kind", ["BINARY", "EXTENSION"])
+def test_unknown_native_inputs_in_application_trees_are_rejected(
+    inventory, monkeypatch, directory, kind
+):
+    native = inventory.write(f"{directory}/third-party.dll")
+    monkeypatch.setattr(notices, "analysis_files", lambda p: [("third-party.dll", native, kind)])
+    with pytest.raises(ValueError, match="Unidentified bundled input"):
+        notices.collect("0.2.0", "linux-x86_64", inventory.executable)

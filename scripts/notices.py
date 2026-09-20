@@ -17,14 +17,14 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def analysis_files(path: Path) -> list[tuple[str, Path]]:
+def analysis_files(path: Path) -> list[tuple[str, Path, str]]:
     """Read the pinned PyInstaller Analysis TOC, never evaluate Python code."""
     data = ast.literal_eval(path.read_text(encoding="utf-8"))
     if len(data) != 20:
         raise ValueError("Unsupported PyInstaller analysis format; review the inventory reader")
     return sorted(
         {
-            (name, Path(source).resolve())
+            (name, Path(source).resolve(), kind)
             for index in (13, 14, 15, 18, 19)
             for name, source, kind in data[index]
             if source
@@ -79,15 +79,15 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
     ]
     if len(bootloaders) != 1 or not bootloaders[0].is_relative_to(boot.resolve()):
         raise ValueError("Expected one native PyInstaller bootloader")
-    files.append(("PyInstaller/bootloader", bootloaders[0]))
-    for name, source in files:
+    files.append(("PyInstaller/bootloader", bootloaders[0], "EXECUTABLE"))
+    for name, source, kind in files:
         if source in owners:
             owner = owners[source]
             if owner == "dinero-cli":
                 owner = "application"
         elif source.is_relative_to(runtime) and "site-packages" not in source.parts:
             owner = "CPython"
-        elif (
+        elif kind not in {"BINARY", "EXTENSION", "EXECUTABLE"} and (
             source.is_relative_to(root / "src")
             or source.is_relative_to(root / "assets")
             or source == root / "scripts/entrypoint.py"
