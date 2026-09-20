@@ -137,3 +137,27 @@ every statically linked sublibrary. All upstream runtime notices are retained.
 See [packaging/README.md](packaging/README.md) before changing Python or dependencies.
 The older v0.1.0 archives predate this packaging; these new documents are not claimed
 to be present in that release.
+
+## Agent skill
+
+[skills/dinero/SKILL.md](skills/dinero/SKILL.md) is a harness-independent instruction layer
+for the installed CLI. It covers help discovery, JSON, authorization, organization selection,
+payloads and safe reads/writes. It accurately describes the commands available in v0.8.0;
+dedicated resource commands are discovered through help when later versions add them.
+
+Copy the `skills/dinero` directory into your harness's skill directory, or symlink it:
+
+```sh
+ln -s /absolute/path/to/dinero-cli/skills/dinero /your/harness/skills/dinero
+```
+
+In PowerShell (Windows may require Developer Mode or elevation):
+
+```powershell
+New-Item -ItemType SymbolicLink -Path C:\your\harness\skills\dinero `
+  -Target C:\path\to\dinero-cli\skills\dinero
+```
+
+Keep the checkout in place when using a symlink. The skill does not install the binary, configure an account or authorize writes.
+Follow the [installation](docs/installation.md), [OAuth/headless](docs/authentication.md) and
+[Bash/PowerShell API examples](docs/api-command.md) for those separate steps.
