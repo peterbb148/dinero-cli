@@ -18,8 +18,11 @@ def test_https_smoke_uses_real_cli_auth_and_server(tmp_path, monkeypatch):
             monkeypatch.delenv(key)
     environment.update(PATH="", DINERO_CONFIG_DIR=str(tmp_path / "state"))
     calls = []
+    native_run = subprocess.run
 
     def execute(arguments, **kwargs):
+        if arguments[1] == "req":
+            return native_run(arguments, **kwargs)
         calls.append(arguments)
         assert kwargs["env"]["PATH"] == "" and kwargs["encoding"] == "utf-8"
         assert kwargs["timeout"] == 45
@@ -92,3 +95,9 @@ def test_smoke_fails_on_contract_regression(tmp_path, monkeypatch, fault):
     monkeypatch.setattr(smoke_api.subprocess, "run", execute)
     with pytest.raises(ValueError, match="Native API smoke failed"):
         smoke_api.verify_flow(tmp_path / "dinero", {}, str(tmp_path), requests)
+
+
+def test_certificate_requires_openssl(tmp_path, monkeypatch):
+    monkeypatch.setattr(smoke_api.shutil, "which", lambda name: None)
+    with pytest.raises(ValueError, match="requires OpenSSL"):
+        smoke_api.make_certificate(tmp_path)

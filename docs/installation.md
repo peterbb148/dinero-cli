@@ -90,6 +90,8 @@ against an ephemeral local HTTPS server. Tests check Unicode, ordered duplicate 
 JSON stdin, empty responses, HTTP errors, secret redaction, 429 details, invalid input,
 non-JSON responses and logout. TLS verification stays enabled using a temporary test CA;
 no real Dinero credentials, live accounting writes or installed developer Python are used.
+The build host requires OpenSSL to generate the one-day test certificate; it is not a
+runtime dependency of the distributed binary. CI uses Ubuntu/Git Bash OpenSSL.
 
 This verifies packaging and protocol behavior on all four runners. A real Visma consent
 flow still depends on your registered application and is not claimed to be exercised by

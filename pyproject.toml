@@ -51,7 +51,6 @@ check_untyped_defs = true
 build = [
     "hatchling==1.29.0",
     "pyinstaller>=6.22,<7",
-    "trustme>=1.2.1,<2",
 ]
 dev = [
     "diff-cover>=10.5.1",
@@ -61,5 +60,4 @@ dev = [
     "pytest-cov>=7.1.0",
     "pyyaml>=6.0.3",
     "ruff>=0.16.8",
-    "trustme>=1.2.1,<2",
 ]

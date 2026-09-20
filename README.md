@@ -17,7 +17,7 @@ target; use `dinero --help` to discover commands actually available in a binary.
 
 ## Development
 
-Install UV, then run:
+Install UV and OpenSSL (for the local HTTPS build fixture), then run:
 
 ```sh
 uv sync --locked

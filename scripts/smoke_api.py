@@ -1,6 +1,7 @@
 """Exercise native binaries against a private local HTTPS fixture, never live Dinero."""
 
 import json
+import shutil
 import ssl
 import subprocess
 import threading
@@ -9,7 +10,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any
 
-import trustme
 from pydantic import SecretStr
 
 from dinero_cli.auth import TokenRecord
@@ -19,6 +19,45 @@ from dinero_cli.storage import atomic_write
 
 TOKEN = "native-smoke-access-token"
 PAYLOAD = {"ContactGuid": "fixture", "Lines": [{"Description": "Æble", "Amount": 12.5}]}
+
+
+def make_certificate(directory: Path) -> tuple[Path, Path]:
+    """Require build-host OpenSSL to create a one-day, local-only test certificate."""
+    executable = shutil.which("openssl")
+    if executable is None:
+        raise ValueError("Native API smoke requires OpenSSL on the build host PATH")
+    certificate, private_key = directory / "ca.pem", directory / "key.pem"
+    configuration = directory / "openssl.cnf"
+    configuration.write_text(
+        "[req]\nprompt=no\ndistinguished_name=dn\nx509_extensions=server\n"
+        "[dn]\nCN=Dinero local smoke test\n"
+        "[server]\nbasicConstraints=critical,CA:TRUE\n"
+        "keyUsage=critical,digitalSignature,keyCertSign\n"
+        "extendedKeyUsage=serverAuth\nsubjectAltName=IP:127.0.0.1\n",
+        encoding="ascii",
+    )
+    subprocess.run(
+        [
+            executable,
+            "req",
+            "-x509",
+            "-newkey",
+            "rsa:2048",
+            "-nodes",
+            "-days",
+            "1",
+            "-config",
+            str(configuration),
+            "-keyout",
+            str(private_key),
+            "-out",
+            str(certificate),
+        ],
+        check=True,
+        capture_output=True,
+        timeout=30,
+    )
+    return certificate, private_key
 
 
 def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> None:
@@ -68,12 +107,10 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
         do_PUT = respond
         do_DELETE = respond
 
-    ca = trustme.CA()
+    certificate, private_key = make_certificate(Path(directory))
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.minimum_version = ssl.TLSVersion.TLSv1_2
-    ca.issue_cert("127.0.0.1").configure_cert(context)
-    certificate = Path(directory) / "ca.pem"
-    ca.cert_pem.write_to_path(certificate)
+    context.load_cert_chain(certificate, private_key)
     environment = {**environment, "SSL_CERT_FILE": str(certificate)}
     with HTTPServer(("127.0.0.1", 0), Handler) as server:
         server.socket = context.wrap_socket(server.socket, server_side=True)
