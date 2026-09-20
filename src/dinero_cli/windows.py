@@ -3,6 +3,8 @@
 import ctypes
 from ctypes import wintypes
 
+from dinero_cli.errors import CLIError
+
 
 class Blob(ctypes.Structure):
     """Represent the documented Win32 DATA_BLOB ABI on x86-64 and ARM64."""
@@ -33,7 +35,8 @@ def protect(value: bytes, *, decrypt: bool = False) -> bytes:
     target = Blob()
     # UI_FORBIDDEN=1. Never set LOCAL_MACHINE, which would allow other users to decrypt.
     if not operation(ctypes.byref(source), None, None, None, None, 1, ctypes.byref(target)):
-        raise OSError("Windows credential protection failed.")
+        code = getattr(ctypes, "get_last_error")()
+        raise CLIError("Windows credential protection failed.", code=5, details={"winerror": code})
     try:
         return ctypes.string_at(target.data, target.size)
     finally:

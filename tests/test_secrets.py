@@ -122,10 +122,13 @@ def test_dpapi_abi_flags_and_buffer_release(monkeypatch, decrypt, success):
     monkeypatch.setattr(
         ctypes, "WinDLL", lambda name, **kw: crypt if name == "crypt32" else kernel, raising=False
     )
+    monkeypatch.setattr(ctypes, "get_last_error", lambda: 5, raising=False)
     if success:
         assert windows.protect(b"input-secret", decrypt=decrypt) == b"protected-result"
         assert calls[-1] == "free"
     else:
-        with pytest.raises(OSError, match="protection failed"):
+        with pytest.raises(CLIError, match="protection failed") as failure:
             windows.protect(b"input-secret", decrypt=decrypt)
+        assert failure.value.code == 5
+        assert failure.value.details == {"winerror": 5}
         assert "free" not in calls
