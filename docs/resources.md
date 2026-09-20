@@ -68,3 +68,45 @@ Files return archive metadata and links, not PDF/image bytes. Filters are `--ext
 `--file-status All|Used|Unused`. File pagination is explicit and only one page is retrieved.
 An unused file can be a duplicate, invoice, receipt or unrelated attachment; its presence alone
 does not prove that a separate expense remains to be booked. No read command mutates records.
+
+## Invoices and purchase vouchers
+
+Invoice list/get/create/update/delete/book/send and purchase-voucher get/create/update/delete/book
+are explicit commands. There is no purchase-voucher list endpoint in the verified specification.
+Invoice update uses v1.2; purchase create uses v1.2, update v1.1 and get/book/delete v1.
+`send` uses the invoice email endpoint, not EAN. Create only creates a draft.
+
+For an authorized change, first get the current voucher, then provide its opaque Timestamp through
+JSON or `--timestamp`. The CLI never reads/merges state during a write or automatically refreshes
+an outdated timestamp. A failed or uncertain write is not retried. Book changes accounting state;
+send delivers an email; delete is destructive. All execute without interactive prompts.
+
+Invoice create requires `ProductLines`; invoice update also requires `Timestamp`. Each line
+requires `AccountNumber`, `BaseAmountValue`, `Discount`, `Quantity`. Other documented fields are
+optional or conditional on the provider. Example draft payload:
+
+```json
+{"ProductLines":[{"AccountNumber":1000,"BaseAmountValue":120,"Discount":0,"Quantity":1,"Unit":"hours","Description":"Consulting"}]}
+```
+
+Purchase create requires `PurchaseType`; update requires `ContactGuid`, `Lines`, `PurchaseType`,
+`Timestamp`, `VoucherDate`. Each supplied line requires `Amount`. Dinero validates conditional
+accounting rules, such as cash versus credit requirements; the CLI does not fill business defaults.
+
+Book requires `Timestamp`, with optional `Number`. Delete accepts a Timestamp object. Email send
+requires explicit `ShouldAddTrustPilotEmailAsBcc`, provided in JSON or through the positive/negative
+flags shown in help. Receiver, subject, message and Timestamp also have options. API email defaults
+are left to Dinero; inspect recipient and message before an authorized send.
+
+All writes support `--input FILE|-` and supported top-level options, reject duplicate input/option
+keys, validate structural field types and preserve unknown fields. Use file input in PowerShell.
+
+```sh
+dinero invoices list --organization 123 --status-filter Draft --page 0 --page-size 100 --json
+dinero invoices get GUID --organization 123 --json
+dinero purchase-vouchers get GUID --organization 123 --json
+```
+
+After explicit authorization and payload review, `invoices create --input invoice.json` creates the
+draft. Booking, sending and deleting require separate authorized commands; creating a draft does
+not authorize those subsequent actions. No live write is needed for testing these commands.

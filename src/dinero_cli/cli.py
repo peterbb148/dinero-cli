@@ -19,8 +19,10 @@ from dinero_cli.commands.config import app as config_app
 from dinero_cli.commands.contacts import app as contacts_app
 from dinero_cli.commands.entries import app as entries_app
 from dinero_cli.commands.files import app as files_app
+from dinero_cli.commands.invoices import app as invoices_app
 from dinero_cli.commands.organizations import app as organizations_app
 from dinero_cli.commands.products import app as products_app
+from dinero_cli.commands.purchase_vouchers import app as purchase_vouchers_app
 from dinero_cli.commands.vat_types import app as vat_types_app
 from dinero_cli.config import saved_values
 from dinero_cli.errors import CLIError
@@ -121,6 +123,8 @@ app.add_typer(auth_app, name="auth")
 app.add_typer(api_app, name="api")
 app.add_typer(organizations_app, name="organizations")
 app.add_typer(contacts_app, name="contacts")
+app.add_typer(invoices_app, name="invoices")
+app.add_typer(purchase_vouchers_app, name="purchase-vouchers")
 app.add_typer(products_app, name="products")
 app.add_typer(entries_app, name="entries")
 app.add_typer(accounts_app, name="accounts")
