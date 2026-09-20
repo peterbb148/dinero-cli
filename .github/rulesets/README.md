@@ -4,8 +4,8 @@
 or force pushes, resolved review threads, squash merges, up-to-date PR/Security/Copilot
 checks from GitHub Actions and CodeQL without high/critical findings or error alerts.
 `PR gate` includes lint/typecheck/tests/coverage and all four native builds when build
-inputs change. Documentation-only changes need no binary build. New-code coverage >80%
-remains a measured review obligation alongside the existing 81% aggregate CI threshold.
+inputs change. Documentation-only changes need no binary build. Diff coverage must be at least 81% of changed executable lines relative to main,
+alongside the existing 81% aggregate CI threshold.
 
 CODEOWNERS assigns all files to @peterbb148. Required human approvals remain zero because
 the sole owner cannot approve their own PRs. Copilot's COMMENTED review is sufficient for

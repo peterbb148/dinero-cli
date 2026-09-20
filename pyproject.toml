@@ -47,6 +47,7 @@ build = [
     "pyinstaller>=6.22,<7",
 ]
 dev = [
+    "diff-cover>=10.5.1",
     "mypy>=2.3.1",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
