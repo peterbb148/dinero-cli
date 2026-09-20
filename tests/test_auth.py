@@ -282,3 +282,21 @@ assert service.access_token()=="new-access"
     ]
     assert [worker.wait(timeout=20) for worker in workers] == [0] * 4
     assert calls.read_text() == "exchange\n"
+
+
+def test_credential_material_retains_values_needed_for_redaction(service):
+    token(service, expired=True)
+    service.transport = httpx.MockTransport(lambda request: httpx.Response(200, json=grant()))
+    material = service.credentials()
+    assert set(material.redactions) == {
+        "sentinel-access",
+        "sentinel-refresh",
+        "sentinel-client-secret",
+        "old-access",
+        "old-refresh",
+    }
+    assert "sentinel" not in repr(material)
+    with service.store.transaction() as txn:
+        txn.state.client_secret = None
+        txn.save()
+    assert set(service.credentials().redactions) == {"sentinel-access", "sentinel-refresh"}
