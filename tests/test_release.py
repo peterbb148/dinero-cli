@@ -324,3 +324,19 @@ def test_cli_dispatch(repository, monkeypatch, capsys):
     monkeypatch.setattr(sys, "argv", ["release", "cleanup", "--repo", "a/b"])
     release.main()
     assert calls[-1] == "a/b"
+
+
+def test_constitution_and_precommit_do_not_trigger_release(repository):
+    original = release.fingerprint("HEAD")
+    for name in (
+        ".specify/memory/constitution.md",
+        ".pre-commit-config.yaml",
+        "devtools/contracts.py",
+        "tests/contracts/test_cli.py",
+        ".github/workflows/ci.yml",
+    ):
+        path = Path(name)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("Development-only change")
+    commit()
+    assert release.fingerprint("HEAD") == original

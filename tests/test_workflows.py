@@ -46,3 +46,15 @@ def test_build_matrix_is_four_native_targets_and_actions_are_pinned():
                 if "uses" in step:
                     revision = step["uses"].split("@")[1]
                     assert len(revision) == 40 and int(revision, 16)
+
+
+def test_ci_runs_same_always_on_contract_hooks_as_local_commits():
+    hooks = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())["repos"][0]["hooks"]
+    assert {h["id"] for h in hooks} == {"ruff-check", "ruff-format", "cli-contracts"}
+    contract = next(h for h in hooks if h["id"] == "cli-contracts")
+    assert contract["always_run"] is True
+    assert contract["pass_filenames"] is False
+    assert "files" not in contract and "types" not in contract
+    assert all(h["entry"].startswith("uv run --locked ") for h in hooks)
+    steps = load("ci.yml")["jobs"]["checks"]["steps"]
+    assert any(s.get("run") == "uv run --no-sync pre-commit run --all-files" for s in steps)
