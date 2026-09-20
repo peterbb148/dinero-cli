@@ -33,7 +33,7 @@ def test_https_smoke_uses_real_cli_auth_and_server(tmp_path, monkeypatch):
 
     monkeypatch.setattr(smoke_api.subprocess, "run", execute)
     smoke_api.smoke_api(tmp_path / "dinero", environment, str(tmp_path))
-    assert len(calls) == 11
+    assert len(calls) == 11 + 31 + 13 + 12 + 2
 
 
 @pytest.mark.parametrize(
@@ -41,6 +41,7 @@ def test_https_smoke_uses_real_cli_auth_and_server(tmp_path, monkeypatch):
 )
 def test_smoke_fails_on_contract_regression(tmp_path, monkeypatch, fault):
     requests = []
+    monkeypatch.setattr(smoke_api, "verify_resources", lambda *args: 0)
 
     def execute(arguments, **kwargs):
         verb = arguments[2]

@@ -211,6 +211,14 @@ token. Personal API keys are reusable; a failed grant still causes the current o
 fail without an automatic retry. Personal integrations have a 60-request/minute limit.
 Stop and report a provider failure when its cause cannot be corrected safely.
 
+## Test-company verification
+
+Automated release tests use local fixtures and do not authorize live bookkeeping. For an explicitly
+requested live smoke, use an isolated config and verified test company, perform dedicated reads
+first, and treat draft creation, booking, sending and deletion as separately scoped operations.
+Follow the [test-company guide](https://github.com/peterbb148/dinero-cli/blob/main/docs/testing.md);
+never reuse production data or credentials as test fixtures.
+
 ## Setup references
 
 The skill is self-contained and can be copied or symlinked into any harness supporting

@@ -89,7 +89,9 @@ Each native binary runs outside the checkout with an empty PATH: help/version, h
 JSON configuration, credential storage/decryption, and authenticated GET/POST/PUT/DELETE
 against an ephemeral local HTTPS server. Tests check Unicode, ordered duplicate queries,
 JSON stdin, empty responses, HTTP errors, secret redaction, 429 details, invalid input,
-non-JSON responses and logout. TLS verification stays enabled using a temporary test CA;
+non-JSON responses and logout. Every dedicated resource operation is also executed with exact wire
+assertions, organization overrides, UTF-8 file/stdin payloads and mutation failure/no-replay checks.
+See [test coverage and optional live verification](testing.md). TLS verification stays enabled using a temporary test CA;
 no real Dinero credentials, live accounting writes or installed developer Python are used.
 The build host requires OpenSSL to generate the one-day test certificate; it is not a
 runtime dependency of the distributed binary. CI uses Ubuntu/Git Bash OpenSSL.

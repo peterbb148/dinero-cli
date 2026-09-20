@@ -85,6 +85,8 @@ def test_sources_rename_delete_and_bundled_markdown_are_build_inputs(repository)
     [
         ".python-version",
         "scripts/build.py",
+        "scripts/smoke_api.py",
+        "scripts/smoke_resources.py",
         "scripts/release.py",
         ".github/workflows/cd.yml",
         "packaging/notices.txt",
