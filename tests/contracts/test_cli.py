@@ -36,4 +36,4 @@ def test_production_command_contracts(monkeypatch):
     monkeypatch.setattr(completion, "install", lambda: ("bash", Path("fixture-completion.sh")))
     report = check(app, REGISTRY, secrets=("contract-access-token", "contract-client-secret"))
     print(report)
-    assert report == "CLI contracts: 15 command nodes, 11 data commands"
+    assert report == "CLI contracts: 16 command nodes, 12 data commands"

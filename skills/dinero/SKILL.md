@@ -14,14 +14,14 @@ handwritten HTTP requests, Python imports or reconstructed token exchanges.
 Start with `dinero --version` and `dinero --help`; discover relevant groups and leaf
 options with `dinero <group> --help` and `dinero <group> <command> --help`.
 
-Version 0.8.0 has:
+The current CLI has:
 
 - `config list|get|set|set-client-secret`: local settings and protected secret input.
-- `auth login|status|logout`: user authorization and safe status metadata.
+- `auth login|login-personal|status|logout`: user authorization and safe status metadata.
 - `api get|post|put|delete PATH`: authenticated JSON API operations.
 
 Dedicated organizations, contacts, products, invoices, purchase vouchers and entries
-commands are planned, not available in 0.8.0. Prefer dedicated resource commands when
+commands are planned, not yet available. Prefer dedicated resource commands when
 the installed help lists them. Use `dinero api` only for an endpoint not represented
 by a dedicated command. Do not guess paths, versions or payload schemas; use the
 project's verified endpoint documentation for that operation. If its required schema
@@ -31,7 +31,7 @@ is unavailable, obtain it before issuing a write.
 
 Inspect `dinero auth status --json` before a workflow requiring API access. It reads
 local metadata only; `authorized` does not prove server-side validity of access or refresh tokens.
-A configured client and initial Visma browser consent are required. Login uses the
+For `auth login`, a configured client and initial Visma browser consent are required. Login uses the
 user's registered Web application, exact redirect URI and permitted scopes; use
 `offline_access` when the registration supports unattended refresh.
 
@@ -41,15 +41,30 @@ to a private file. A registered production HTTPS callback also needs a new priva
 `--callback-file` delivered by the user's callback handler. Browser consent is still
 required. Follow the authentication guide below; do not invent a callback service.
 
+For personal integrations, use `auth login-personal --input FILE --json` instead: no Visma
+app or browser callback is needed, but Dinero-approved personal client credentials, an
+organization API key and a Pro/Total subscription are required. Supply a private UTF-8 JSON
+object with `client_id`, `client_secret`, `api_key` and numeric-string `organization`, or pipe
+it through `--input -` from an existing secret source. Do not create literal secrets in shell
+history. Select the same organization in config or with `--organization`; a per-command
+selection is not saved. Personal credentials are separate from the Visma client secret.
+
+Only one authorization is active. Successful login switches method; a failed login preserves
+previous state. Personal status includes `method` and `organization`; `refresh_available`
+means the stored API key can renew the token, not that an OAuth refresh token exists.
+Personal tokens renew automatically with a fresh API-key grant under a process lock.
+
 Credentials must not appear in arguments, shell history, chat, JSON output or logs.
 Supply an existing private client-secret file using
 `dinero config set-client-secret --input /private/path/client-secret.txt`.
 Never inspect or print the token store. The explicitly selected file backend uses
 Windows DPAPI or Linux owner-only files; Linux files are not encrypted at rest.
-`auth logout` removes local tokens, preserves the client secret and does not revoke
+`auth logout` removes local tokens and personal API credentials, preserves the separate Visma
+client secret and does not revoke
 server-side consent. Do not log out as routine cleanup of a read operation.
 
-Authorization is user-based. Never select the first available organization implicitly:
+Visma authorization is user-based; personal authorization is bound to one organization.
+Never select the first available organization implicitly:
 
 ```sh
 dinero api get /v1/organizations --json
@@ -71,6 +86,9 @@ output is for human reading; do not parse its tables.
 dinero api get '/v1/{organizationId}/contacts' --organization 123 \
   --query page=0 --query pageSize=100 --json
 ```
+
+Personal authorization rejects paths for another organization and ambiguous global routes;
+its only organization-free route is read-only `/v1/organizations`.
 
 Query options use exact API field names. Repeated `--query KEY=VALUE` pairs preserve
 order and duplicate keys; supply plain text and let the CLI encode it. Do not put
@@ -122,7 +140,9 @@ into an empty successful result. Empty successful responses are JSON `null`.
 The CLI makes no automatic retries or redirects. After an uncertain write, read the
 server state before considering another attempt; do not blindly resend, book or send
 again. Honor rate limits and keep any subsequent attempt within the authorized scope.
-A failed/uncertain token refresh requires fresh login rather than replaying an old token.
+A failed/uncertain Visma refresh requires fresh login rather than replaying an old refresh
+token. Personal API keys are reusable; a failed grant still causes the current operation to
+fail without an automatic retry. Personal integrations have a 60-request/minute limit.
 Stop and report a provider failure when its cause cannot be corrected safely.
 
 ## Setup references

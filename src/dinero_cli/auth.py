@@ -6,7 +6,7 @@ import secrets
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlencode
 
 import httpx
@@ -14,7 +14,9 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError
 
 from dinero_cli.config import Settings, require_trusted_origin
 from dinero_cli.errors import CLIError
-from dinero_cli.secrets import SecretStore
+from dinero_cli.personal import PersonalCredentials
+from dinero_cli.personal import exchange as personal_exchange
+from dinero_cli.secrets import SecretStore, Transaction
 
 AUTHORIZE = "https://connect.visma.com/connect/authorize"
 TOKEN = "https://connect.visma.com/connect/token"
@@ -26,6 +28,7 @@ class Credentials:
 
     access_token: str = field(repr=False)
     redactions: tuple[str, ...] = field(repr=False)
+    organization: str | None = None
 
 
 def credentials(
@@ -48,6 +51,8 @@ class TokenRecord(BaseModel):
     expires_at: float = Field(allow_inf_nan=False, gt=0)
     client_id: str
     api_origin: str
+    method: Literal["visma", "personal"] = "visma"
+    organization: str | None = None
 
     def storage(self) -> dict[str, Any]:
         """Return plaintext only for the protected store's serialization boundary."""
@@ -104,8 +109,16 @@ class AuthService:
             raise CLIError("Set client-id for your registered Visma web application.")
         return self.settings.client_id
 
-    def matches(self, record: TokenRecord) -> bool:
+    def matches(self, record: TokenRecord, personal: PersonalCredentials | None = None) -> bool:
         """Prevent forwarding authorization to a different client or API origin."""
+        if record.method == "personal":
+            return bool(
+                personal is not None
+                and record.client_id == personal.client_id
+                and record.organization == personal.organization
+                and self.settings.organization == personal.organization
+                and record.api_origin == self.settings.api_base_url
+            )
         return (
             record.client_id == self.settings.client_id
             and record.api_origin == self.settings.api_base_url
@@ -115,26 +128,39 @@ class AuthService:
         """Inspect local authorization without network access or token refresh."""
         record = None
         pending = False
+        personal = None
         if self.settings.credential_backend is not None or self.store is not None:
             with self.secret_store().transaction() as transaction:
                 record = read_record(transaction.state.tokens)
                 pending = transaction.state.refresh_pending
-        matches = record is not None and self.matches(record)
-        return {
+                personal = transaction.state.personal
+        matches = record is not None and self.matches(record, personal)
+        result: dict[str, Any] = {
             "authorized": record is not None,
             "access_token_valid": bool(
                 record is not None and matches and not pending and record.expires_at > self.now()
             ),
-            "refresh_available": bool(record is not None and record.refresh_token is not None),
+            "refresh_available": bool(
+                record is not None
+                and (
+                    record.refresh_token is not None
+                    or (record.method == "personal" and personal is not None)
+                )
+            ),
             "expires_at": record.expires_at if record is not None else None,
             "configuration_matches": matches,
             "refresh_pending": pending,
         }
 
+        if record is not None and record.method == "personal":
+            result.update(method="personal", organization=record.organization)
+        return result
+
     def logout(self) -> dict[str, bool]:
         """Delete local token state only, preserving the configured application secret."""
         with self.secret_store().transaction() as transaction:
             transaction.state.tokens = None
+            transaction.state.personal = None
             transaction.state.refresh_pending = False
             transaction.save()
         return {"logged_out": True}
@@ -193,9 +219,11 @@ class AuthService:
         Async callers must run this complete blocking transaction in a worker thread.
         """
         require_trusted_origin(self.settings)
-        client_id = self.client_id()
         with self.secret_store().transaction() as transaction:
             record = read_record(transaction.state.tokens)
+            if record is not None and record.method == "personal":
+                return self.personal_credentials(transaction, record)
+            client_id = self.client_id()
             if record is None or not self.matches(record):
                 raise CLIError(
                     "Authorization is missing or its context changed; run auth login.", code=3
@@ -266,6 +294,64 @@ class AuthService:
                 fields["code_verifier"] = verifier
             grant = self.exchange(fields)
             transaction.state.tokens = self.record(grant).storage()
+            transaction.state.personal = None
             transaction.state.refresh_pending = False
             transaction.save()
         return self.status()
+
+    def personal_record(self, personal: PersonalCredentials) -> TokenRecord:
+        """Validate a personal grant without accepting OAuth refresh credentials."""
+        raw, status = personal_exchange(personal, self.transport)
+        try:
+            grant = Grant.model_validate_json(raw)
+            token = grant.access_token.get_secret_value()
+            if (
+                grant.token_type.lower() != "bearer"
+                or not token.isascii()
+                or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in token)
+            ):
+                raise ValueError("Invalid bearer token")
+        except (ValidationError, ValueError) as error:
+            raise CLIError(
+                "Dinero returned an invalid personal token response.", code=3, status=status
+            ) from error
+        return TokenRecord(
+            access_token=grant.access_token,
+            expires_at=self.now() + grant.expires_in,
+            client_id=personal.client_id,
+            api_origin=self.settings.api_base_url,
+            method="personal",
+            organization=personal.organization,
+        )
+
+    def login_personal(self, personal: PersonalCredentials) -> dict[str, Any]:
+        """Replace authorization using an explicit organization-specific personal grant."""
+        require_trusted_origin(self.settings)
+        if self.settings.organization != personal.organization:
+            raise CLIError("Personal credentials must match the selected organization.")
+        with self.secret_store().transaction() as transaction:
+            record = self.personal_record(personal)
+            transaction.state.personal = personal
+            transaction.state.tokens = record.storage()
+            transaction.state.refresh_pending = False
+            transaction.save()
+        return self.status()
+
+    def personal_credentials(self, transaction: Transaction, record: TokenRecord) -> Credentials:
+        """Renew an expiring personal grant under the existing cross-process lock."""
+        personal = transaction.state.personal
+        if personal is None or not self.matches(record, personal):
+            raise CLIError(
+                "Personal authorization does not match the selected organization or API origin.",
+                code=3,
+            )
+        previous = record.access_token.get_secret_value()
+        if record.expires_at <= self.now() + 30:
+            record = self.personal_record(personal)
+            transaction.state.tokens = record.storage()
+            transaction.save()
+        return Credentials(
+            record.access_token.get_secret_value(),
+            (previous, record.access_token.get_secret_value(), *personal.redactions()),
+            organization=personal.organization,
+        )
