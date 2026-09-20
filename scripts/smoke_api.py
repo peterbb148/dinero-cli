@@ -70,6 +70,7 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
 
     ca = trustme.CA()
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.minimum_version = ssl.TLSVersion.TLSv1_2
     ca.issue_cert("127.0.0.1").configure_cert(context)
     certificate = Path(directory) / "ca.pem"
     ca.cert_pem.write_to_path(certificate)
