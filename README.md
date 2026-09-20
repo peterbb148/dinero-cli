@@ -105,7 +105,11 @@ For each new command:
    explicit rationale for each inapplicable category in `excluded_failures`; all data
    commands require success and error cases. Include sentinel credentials when invoking
    `check` so accidental output disclosure fails.
-5. Keep fixtures in `tests/contracts/`: its autouse fixture isolates configuration and
+5. Update `skills/dinero/SKILL.md` in the same PR for new or changed CLI functionality,
+   including options, authentication, payloads, output/errors and mutation behavior. Verify
+   examples against actual help and offline behavior; describe the skill changes and evidence
+   in the PR. SKILL-001 makes stale or missing guidance a merge-blocking review finding.
+6. Keep fixtures in `tests/contracts/`: its autouse fixture isolates configuration and
    blocks network/subprocess calls. No live Dinero account or LLM is used. JSON errors
    belong on stderr with empty stdout; use `status: null` if no HTTP response exists.
 
@@ -137,3 +141,27 @@ every statically linked sublibrary. All upstream runtime notices are retained.
 See [packaging/README.md](packaging/README.md) before changing Python or dependencies.
 The older v0.1.0 archives predate this packaging; these new documents are not claimed
 to be present in that release.
+
+## Agent skill
+
+[skills/dinero/SKILL.md](skills/dinero/SKILL.md) is a harness-independent instruction layer
+for the installed CLI. It covers help discovery, JSON, authorization, organization selection,
+payloads and safe reads/writes. It accurately describes the commands available in v0.8.0;
+dedicated resource commands are discovered through help when later versions add them.
+
+Copy the `skills/dinero` directory into your harness's skill directory, or symlink it:
+
+```sh
+ln -s /absolute/path/to/dinero-cli/skills/dinero /your/harness/skills/dinero
+```
+
+In PowerShell (Windows may require Developer Mode or elevation):
+
+```powershell
+New-Item -ItemType SymbolicLink -Path C:\your\harness\skills\dinero `
+  -Target C:\path\to\dinero-cli\skills\dinero
+```
+
+Keep the checkout in place when using a symlink. The skill does not install the binary, configure an account or authorize writes.
+Follow the [installation](docs/installation.md), [OAuth/headless](docs/authentication.md) and
+[Bash/PowerShell API examples](docs/api-command.md) for those separate steps.
