@@ -79,7 +79,7 @@ def freezer_environment(target: str) -> dict[str, str]:
     """Keep unrelated runner software out of Windows DLL dependency discovery."""
     environment = os.environ.copy()
     if target.startswith("windows"):
-        windows = Path(environment["SystemRoot"])
+        windows = Path(os.environ["SystemRoot"])
         environment["PATH"] = os.pathsep.join(
             str(p)
             for p in (Path(sys.base_prefix), Path(sys.base_prefix) / "DLLs", windows / "System32")
