@@ -3,8 +3,8 @@
 Verified against [Dinero OpenAPI](https://api.dinero.dk/openapi/v1/swagger.json) on 2026-09-20.
 The checked structural extraction is [endpoint-matrix.json](endpoint-matrix.json); it records the
 source SHA-256, exact query names/types/defaults, path arguments and request field inventories.
-Organizations, contacts and products are implemented. Invoice, purchase-voucher and entry
-commands below remain planned.
+Organizations, contacts, products, entries and read-only lookup commands are implemented.
+Invoice and purchase-voucher commands below remain planned.
 
 `{organizationId}` is resolved from `--organization` or configuration, never an implicit account.
 `{guid}` is a positional resource GUID. All other path parameters remain positional.
@@ -36,6 +36,12 @@ commands below remain planned.
 | `purchase-vouchers book` | POST | `/v1/{organizationId}/vouchers/purchase/{guid}/book` | BookModel |
 | `entries list` | GET | `/v1/{organizationId}/entries` | None |
 | `entries changes` | GET | `/v1/{organizationId}/entries/changes` | None |
+| `accounts entry` | GET | `/v1/{organizationId}/accounts/entry` | None |
+| `accounts purchase` | GET | `/v1/{organizationId}/accounts/purchase` | None |
+| `accounts deposit` | GET | `/v1/{organizationId}/accounts/deposit` | None |
+| `accounting-years list` | GET | `/v1/{organizationId}/accountingyears` | None |
+| `vat-types list` | GET | `/v1/{organizationId}/vatTypes` | None |
+| `files list` | GET | `/v1/{organizationId}/files` | None |
 
 ## Resource differences
 
@@ -66,9 +72,10 @@ and voucher `--timestamp` → `Timestamp`. The payload combination rule is in th
 
 ## Deliberate escape-hatch scope
 
-Notes, attachments/files, PDF exports, payments, reminders, EAN, credit notes, restore, totals/fetch,
+Notes, file upload/download, PDF exports, payments, reminders, EAN, credit notes, restore, totals/fetch,
 similarity and other auxiliary endpoints do not gain dedicated commands in the first matrix.
-Use `dinero api` for endpoints whose transport the escape hatch supports. Its initial JSON-only
+Agents must add dedicated commands before using any remaining operation. The manual escape
+hatch supports only JSON requests and responses. Its initial JSON-only
 transport does not promise multipart upload or binary/PDF download; those fail clearly and require
 a later explicit transport extension. Never reconstruct bearer-token HTTP calls in an agent skill.
 

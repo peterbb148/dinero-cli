@@ -3,7 +3,8 @@
 A Python/Typer CLI distributed as standalone Windows and Linux executables.
 This milestone implements configuration, protected credential storage, Visma and personal API-key authorization,
 dedicated organizations/contacts/products commands, the manual JSON API escape hatch and CD.
-Invoices, purchase vouchers and entries commands remain planned.
+Entries, account views, accounting years, VAT types and document metadata also have dedicated
+read commands. Invoices and purchase vouchers remain planned.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
 Use [dinero api](docs/api-command.md) for JSON endpoints through the
 [shared async HTTP client](docs/http-client.md).
@@ -116,7 +117,7 @@ For each new command:
 
 The checker exercises redirected human/JSON output with normal and forced-colour settings.
 Its adversarial tests prove that missing `--json`, noise/ANSI, wrong streams/status,
-changed payloads and unregistered commands fail. Today the CLI has **23 data commands** under `config`, `auth`, `api`, `organizations`, `contacts` and `products`;
+changed payloads and unregistered commands fail. Today the CLI has **31 data commands**, including resource reads and mutations;
 help/version and Typer completion remain control surfaces. Completion callbacks run with shell
 lookup/installation mocked. These tests do not prove visual quality, every possible secret
 path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations

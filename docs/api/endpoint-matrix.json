@@ -548,6 +548,156 @@
         }
       ],
       "request_schema": null
+    },
+    {
+      "command": "accounts entry",
+      "method": "GET",
+      "path": "/v1/{organizationId}/accounts/entry",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "AccountNumber,Name,IsHidden"
+          }
+        },
+        {
+          "option": "--category-filter",
+          "name": "categoryFilter",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "accounts purchase",
+      "method": "GET",
+      "path": "/v1/{organizationId}/accounts/purchase",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "AccountNumber,Name,VatCode,Category,CategoryName,IsHidden"
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "accounts deposit",
+      "method": "GET",
+      "path": "/v1/{organizationId}/accounts/deposit",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "AccountNumber,Name"
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "accounting-years list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/accountingyears",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "vat-types list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/vatTypes",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "files list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/files",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--extensions",
+          "name": "extensions",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "option": "--uploaded-before",
+          "name": "uploadedBefore",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--uploaded-after",
+          "name": "uploadedAfter",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--file-status",
+          "name": "fileStatus",
+          "required": false,
+          "schema": {
+            "default": "All",
+            "$ref": "#/components/schemas/FileStatus"
+          }
+        },
+        {
+          "option": "--page",
+          "name": "page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        },
+        {
+          "option": "--page-size",
+          "name": "pageSize",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 1000
+          }
+        }
+      ],
+      "request_schema": null
     }
   ],
   "request_summaries": {
