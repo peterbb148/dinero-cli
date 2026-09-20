@@ -125,6 +125,20 @@ class APIClient:
                 ):
                     raise CLIError("Request destination differs from the configured API origin.")
                 material = await asyncio.to_thread(self.auth.credentials)
+                if material.organization is not None:
+                    segments = unquote(destination.path).split("/")
+                    if (
+                        len(segments) < 3
+                        or not re.fullmatch(r"v[0-9]+(?:\.[0-9]+)?", segments[1])
+                        or (
+                            segments[2] != material.organization
+                            and not (destination.path == "/v1/organizations" and method == "GET")
+                        )
+                    ):
+                        raise CLIError(
+                            "API path does not match the personally authorized organization.",
+                            code=3,
+                        )
                 request.headers["Authorization"] = "Bearer " + material.access_token
                 request.headers["Accept"] = "application/json"
                 response = await client.send(request)

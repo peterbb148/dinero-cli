@@ -1,6 +1,9 @@
 """Offline command contracts for actual auth callbacks and services."""
 
+import json
 from contextlib import contextmanager
+from functools import partial
+from pathlib import Path
 
 import httpx
 from config_cases import IO, PARSER, error, failed_read, fresh, invalid
@@ -189,3 +192,62 @@ CONTRACTS = {
         ),
     ),
 }
+
+
+@contextmanager
+def personal_configured(status=200, transport_error=False):
+    with configured(status=status, transport_error=transport_error):
+        save_setting("organization", "123")
+        path = Path("personal.json")
+        path.write_text(
+            json.dumps(
+                {
+                    "client_id": "personal-client",
+                    "client_secret": "contract-client-secret",
+                    "api_key": "contract-api-key",
+                    "organization": "123",
+                }
+            )
+        )
+        path.chmod(0o600)
+        yield
+
+
+CONTRACTS[("auth", "login-personal")] = Contract(
+    kind="data",
+    options=frozenset({"--input", "--organization", "--json"}),
+    reason="Explicit personal organization authorization, with credentials only in private input.",
+    excluded_failures=NO_API,
+    cases=(
+        Case(
+            ("--input", "personal.json"),
+            expected={**LOGGED_IN, "method": "personal", "organization": "123"},
+            human=("personal", "123", "Yes"),
+            setup=personal_configured,
+        ),
+        Case(
+            ("--input", "personal.json", "--organization", "456"),
+            expected=error("Personal credentials must match the selected organization."),
+            human=("selected organization",),
+            exit_code=2,
+            failure="validation",
+            setup=personal_configured,
+        ),
+        Case(
+            ("--input", "personal.json"),
+            expected={**error("Dinero rejected the personal token grant."), "status": 401},
+            human=("HTTP 401", "rejected"),
+            exit_code=3,
+            failure="authentication",
+            setup=partial(personal_configured, status=401),
+        ),
+        Case(
+            ("--input", "personal.json"),
+            expected=error("Personal token exchange failed; no automatic retry was made."),
+            human=("Personal token exchange failed",),
+            exit_code=5,
+            failure="transport",
+            setup=partial(personal_configured, transport_error=True),
+        ),
+    ),
+)

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError
 
 from dinero_cli.config import Settings, config_directory
 from dinero_cli.errors import CLIError
+from dinero_cli.personal import PersonalCredentials
 from dinero_cli.storage import atomic_write, locked, read_private
 from dinero_cli.windows import protect
 
@@ -26,12 +27,15 @@ class SecretState(BaseModel):
     client_secret: SecretStr | None = Field(default=None, repr=False)
     tokens: dict[str, Any] | None = Field(default=None, repr=False)
     refresh_pending: bool = False
+    personal: PersonalCredentials | None = Field(default=None, repr=False)
 
     def storage_bytes(self) -> bytes:
         """Serialize only for protected storage, never for a CLI response."""
         values = self.model_dump()
         if self.client_secret is not None:
             values["client_secret"] = self.client_secret.get_secret_value()
+        if self.personal is not None:
+            values["personal"] = self.personal.storage()
         raw = json.dumps(values, allow_nan=False).encode()
         return WINDOWS_HEADER + protect(raw) if WINDOWS else raw
 

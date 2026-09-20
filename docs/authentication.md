@@ -1,7 +1,9 @@
 # Visma Connect authorization
 
-`dinero auth login`, `dinero auth status` and `dinero auth logout` support human output and
-`--json`. Authorization belongs to the user and can be used across organizations. Login does
+`dinero auth login`, `dinero auth login-personal`, `dinero auth status` and
+`dinero auth logout` support human output and
+`--json`. Visma authorization belongs to the user and can be used across organizations. Personal
+authorization is bound to a single organization; see the personal integration section below. Login does
 not choose an organization or send bookkeeping requests. API commands remain separate work.
 
 ## Register and configure your application
@@ -113,3 +115,67 @@ No live registration, production authorization or bookkeeping request is part of
 - [Visma web applications](https://docs.connect.visma.com/v1/docs/server-side-web-applications)
 - [Visma offline access](https://docs.connect.visma.com/docs/offline-access)
 - [OAuth 2.0 refresh-token rules, section 6](https://www.rfc-editor.org/rfc/rfc6749#section-6)
+
+## Personal integration without a Visma app
+
+For an integration used for your own company, Dinero also provides personal credentials.
+This is a separate login method: it needs Dinero-approved client credentials and an API key
+for the selected organization, but no Visma Connect app or browser callback. Apply under
+Integrationer → Se og opret API-nøgler → Personlig integration. A Pro/Total subscription is
+required. See [Dinero's personal integration guide](https://developer.dinero.dk/documentation/personal-integration/).
+
+Prepare a private UTF-8 JSON object in an editor, replacing the placeholders with your
+personal credentials (not the Visma application secret):
+
+```json
+{
+  "client_id": "YOUR_PERSONAL_CLIENT_ID",
+  "client_secret": "YOUR_PERSONAL_CLIENT_SECRET",
+  "api_key": "YOUR_ORGANIZATION_API_KEY",
+  "organization": "123"
+}
+```
+
+Keep that input file private (0600 on Linux), outside the repository and logs. Supply its
+path, never its contents, in command arguments. An upstream secret manager may alternatively
+pipe the JSON bytes into `--input -`; never put literal secrets in a shell command.
+
+```sh
+dinero config set credential-backend file
+dinero config set organization 123
+dinero auth login-personal --input /private/path/personal.json --json
+dinero auth status --json
+dinero api get '/v1/{organizationId}/contacts' --json
+```
+
+`login-personal --organization 123` can override the default for that invocation, but does
+not save a default: subsequent API calls must also select that organization. Status with
+no matching saved/environment organization reports `configuration_matches: false`.
+A personal status includes `method: "personal"` and `organization` in addition to the usual
+safe fields. `refresh_available` means the stored API key can request a new grant; personal
+integration has no OAuth refresh token. Status itself does not make a network request.
+
+The CLI sends the documented Basic-authenticated, URL-encoded password grant to Dinero's
+fixed HTTPS token endpoint. It saves the API key, personal client secret and returned access
+token in the existing protected store, separately from the Visma client secret. Tokens are
+bound to the personal client, explicit organization and configured API origin. Expiring
+tokens are renewed with a new API-key grant under the process lock. No fallback to Visma,
+redirect or hidden retry occurs. Unlike rotating Visma refresh tokens, the API key is reusable;
+a failed exchange does not discard the previous authorization or mark a refresh token consumed.
+
+Only one authorization is active. Successful `auth login` selects Visma and removes stored
+personal credentials; successful `auth login-personal` replaces the active Visma token record.
+A failed login preserves previous authorization. `auth logout` removes personal credentials
+as well as tokens, while preserving the separate Visma client secret and public settings.
+It does not revoke the organization's API key on Dinero's server. Remove the temporary input
+file when it is no longer needed; do not display it for diagnostics.
+
+API calls must select the bound organization, and explicit API paths for a different company
+are rejected. Personal authorization supports organization-scoped `/vN/ID/...` endpoints and
+read-only `/v1/organizations`; unknown/global escape-hatch routes are rejected until explicitly
+supported, rather than forwarding an organization-scoped token to an ambiguous path.
+
+Personal integrations have a documented limit of 60 requests/minute. HTTP 429 remains exit 6,
+with a safe `retry_after` detail when supplied. Grant errors preserve HTTP status without
+printing provider response bodies or secrets. No live account/API-key creation is performed
+by this command; obtain approved credentials before use.
