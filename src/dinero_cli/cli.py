@@ -11,6 +11,7 @@ from typer.core import Abort, TyperGroup
 from typer.main import get_command
 
 from dinero_cli._version import VERSION
+from dinero_cli.commands.api import app as api_app
 from dinero_cli.commands.auth import app as auth_app
 from dinero_cli.commands.config import app as config_app
 from dinero_cli.config import saved_values
@@ -109,6 +110,7 @@ app = typer.Typer(
 )
 app.add_typer(config_app, name="config")
 app.add_typer(auth_app, name="auth")
+app.add_typer(api_app, name="api")
 
 
 @app.callback(invoke_without_command=True)
