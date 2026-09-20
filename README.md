@@ -1,22 +1,21 @@
 # Dinero CLI
 
 A Python/Typer CLI distributed as standalone Windows and Linux executables.
-This milestone implements configuration, protected credential storage, Visma and personal API-key authorization,
+It implements configuration, protected credential storage, Visma and personal API-key authorization,
 dedicated organizations/contacts/products commands, the manual JSON API escape hatch and CD.
 Entries, account views, accounting years, VAT types and document metadata also have dedicated
 read commands. Invoices support list/get/create/update/delete/book/send; purchase vouchers support
 get/create/update/delete/book. Creating a draft, booking it and emailing an invoice are separate operations.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
-Use [dinero api](docs/api-command.md) for JSON endpoints through the
-[shared async HTTP client](docs/http-client.md).
+Use [dedicated resource commands](docs/resources.md) for accounting workflows. The
+[manual escape hatch](docs/api-command.md) shares the same client; agents must use dedicated commands.
 There is no official pip/PyPI release. The project is source available under Apache-2.0 **subject to Commons Clause 1.0**;
 see [LICENSE](LICENSE). It is not licensed under unrestricted Apache-2.0.
 
 ## Implementation contract
 
-The planned CLI behavior is specified in [CLI contract](docs/cli-contract.md) and the
-[verified endpoint matrix](docs/api/endpoint-matrix.md). These describe the implementation
-target; use `dinero --help` to discover commands actually available in a binary.
+CLI behavior is specified in [CLI contract](docs/cli-contract.md) and the
+[verified endpoint matrix](docs/api/endpoint-matrix.md). The listed commands are implemented; use `dinero --help` to discover commands actually available in a binary.
 
 ## Development
 
@@ -167,11 +166,35 @@ New-Item -ItemType SymbolicLink -Path C:\your\harness\skills\dinero `
 
 Keep the checkout in place when using a symlink. The skill does not install the binary, configure an account or authorize writes.
 Follow the [installation](docs/installation.md), [OAuth/headless](docs/authentication.md) and
-[Bash/PowerShell API examples](docs/api-command.md) for those separate steps.
+[Bash/PowerShell resource examples](docs/resources.md) for those separate steps.
 
 ## Dedicated resource commands
 
-Use `dinero organizations list --json`, `dinero contacts --help` and `dinero products --help`.
-Contacts and products support list/get/create/update/delete, organization overrides, human output,
-and `--json`. Agents must use dedicated commands; missing functionality requires a dedicated
-command before use. See [resource usage](docs/resources.md) and the generic skill.
+Discover commands with `dinero --help`, then `dinero <resource> --help`. The groups are
+`organizations`, `contacts`, `products`, `entries`, `accounts`, `accounting-years`, `vat-types`,
+`files`, `invoices` and `purchase-vouchers`. Operations differ by resource; there is no invented
+purchase-voucher list. See [resource usage](docs/resources.md) for payloads and filters.
+
+After [installing a binary](docs/installation.md), choose one documented login method:
+
+- [Visma Connect](docs/authentication.md): your registered application and initial browser consent;
+  subsequent refresh is non-interactive with permitted offline access.
+- [Personal integration](docs/authentication.md#personal-integration-without-a-visma-app): approved
+  personal client credentials and an organization API key, supplied through a private file/stdin.
+- [Headless Visma bootstrap](docs/authentication.md#production-https-callback-and-headless-bootstrap):
+  private consent/callback files; a browser still completes consent.
+
+For Bash or PowerShell, once authorized (replace `123` with the chosen organization):
+
+```sh
+dinero auth status --json
+dinero organizations list --json
+dinero contacts list --organization 123 --page 0 --page-size 100 --json
+dinero invoices --help
+```
+
+These reads do not save a default organization. List calls return one page only. Use `--json`
+for scripts; human tables are for terminals. Errors go to stderr with a nonzero exit status.
+All writes require explicit scope and current resource information; draft creation never books
+or sends. File upload/binary download, MCP login and automatic accounting suggestions are not
+implemented. No official PyPI package or 32-bit/macOS binary is supplied.

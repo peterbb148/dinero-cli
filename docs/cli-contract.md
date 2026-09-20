@@ -1,10 +1,9 @@
 # CLI contract 1.0
 
-Status: implementation specification, ratified 2026-09-20 for issue #1. The executable
-currently exposes configuration/auth commands and help/version/completion; this document does not
-claim the planned accounting API commands exist. The [constitution](../.specify/memory/constitution.md)
+Status: implementation specification, ratified 2026-09-20 for issue #1. The executable implements configuration/auth and the dedicated accounting commands in the
+[resource guide](resources.md). The [constitution](../.specify/memory/constitution.md)
 governs enforcement.
-The [endpoint matrix](api/endpoint-matrix.md) specifies the planned dedicated API operations.
+The [endpoint matrix](api/endpoint-matrix.md) records the implemented dedicated API operations.
 
 ## Commands and input
 
@@ -95,6 +94,9 @@ secret argument or dump a raw OAuth response. Secrets are never required as CLI 
 
 ## Deterministic HTTP and escape hatch
 
+The escape hatch is for manual use. Agents must use dedicated commands under API-001 in the
+constitution, and report missing capabilities rather than reconstructing API requests.
+
 `dinero api get|post|put|delete PATH` uses the same auth, config, organization resolution,
 HTTP client and output boundary as dedicated commands. It accepts `--json`, `--organization`,
 `--query KEY=VALUE` repeatedly and `--input FILE|-` on body-capable methods. Split a query
@@ -138,7 +140,7 @@ store. The async HTTP client owns origin validation, authenticated requests, sta
 and timeouts. Output owns human rendering, JSON serialization and sanitized common errors.
 Tests replace network/auth boundaries and run the actual CLI parser and command callbacks.
 
-Use these boundaries while implementing #2–#7; avoid empty placeholder service implementations.
+Keep commands within these shared boundaries.
 Credentials and live Dinero consent are external prerequisites for opt-in live tests, not CI.
 Live bookkeeping is never part of automated tests or initial setup.
 
@@ -174,5 +176,5 @@ success path. Direct Python-library callers retain ordinary exceptions for debug
 
 The shared payload reader accepts strict UTF-8 JSON objects from a file or `--input -`, rejecting
 duplicate keys, non-finite numbers, invalid Unicode and unsupported nesting before API execution.
-The escape-hatch commands will use it when #7 is implemented. Actual subprocess tests complement
+Dedicated resource commands and the manual escape hatch use this reader. Actual subprocess tests complement
 the command registry for process encoding, pipeline closure and unexpected-failure behavior.

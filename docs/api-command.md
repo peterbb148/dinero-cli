@@ -1,5 +1,8 @@
 # JSON API escape hatch
 
+This is a manual interface. Agents must use the [dedicated resource commands](resources.md);
+if a capability is missing, implement it through an issue/PR before agent use.
+
 `dinero api get|post|put|delete PATH` sends one request through the common authenticated
 client. Discover exact syntax with `dinero api --help` and `dinero api post --help`.
 Prefer a dedicated resource command when one exists. Use documented Dinero endpoints;
