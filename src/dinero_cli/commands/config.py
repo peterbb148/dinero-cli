@@ -55,12 +55,11 @@ def set_client_secret(
     store = SecretStore(settings)
     try:
         if input_file == "-":
-            value = sys.stdin.read()
+            value = sys.stdin.buffer.read().decode("utf-8")
         else:
             path = Path(input_file)
             check_private(path)
             value = path.read_text(encoding="utf-8")
-        value.encode("utf-8")  # Reject invalid stdin bytes represented by surrogateescape.
     except UnicodeError as error:
         raise CLIError("Client secret input must be UTF-8.") from error
     value = value.rstrip("\r\n")

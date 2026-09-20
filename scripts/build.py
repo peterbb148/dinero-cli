@@ -73,6 +73,7 @@ def smoke(executable: Path, version: str) -> None:
                 env=environment,
                 check=True,
                 text=True,
+                encoding="utf-8",
                 capture_output=True,
             )
             if expected not in result.stdout or result.stderr:
@@ -122,6 +123,7 @@ def smoke_config(executable: Path, environment: dict[str, str], directory: str) 
             input=secret,
             check=True,
             text=True,
+            encoding="utf-8",
             capture_output=True,
         )
         if result.stderr or json.loads(result.stdout) != expected:
@@ -132,6 +134,7 @@ def smoke_config(executable: Path, environment: dict[str, str], directory: str) 
         env=environment,
         check=True,
         text=True,
+        encoding="utf-8",
         capture_output=True,
     )
     if result.stderr or "123" not in result.stdout or "organization" not in result.stdout:

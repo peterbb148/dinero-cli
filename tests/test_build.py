@@ -94,6 +94,7 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
 
     def execute(args, **kwargs):
         calls.append((args, kwargs))
+        assert kwargs["encoding"] == "utf-8"
         if args[1] in {"config", "auth"}:
             from typer.testing import CliRunner
 

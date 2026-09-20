@@ -333,3 +333,61 @@ def test_invalid_stdin_secret_is_rejected_before_storage(cli, monkeypatch):
     with pytest.raises(CLIError, match="must be UTF-8"):
         commands.set_client_secret("-", True)
     assert not (config.config_directory() / "credentials.bin").exists()
+
+
+def test_secret_stdin_uses_utf8_despite_inherited_encoding(cli):
+    import os
+    import subprocess
+    import sys
+
+    config.save_setting("credential-backend", "file")
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "from dinero_cli.cli import main; main()",
+            "config",
+            "set-client-secret",
+            "--input",
+            "-",
+            "--json",
+        ],
+        input="sentinel-Ø-secret".encode(),
+        env={**os.environ, "PYTHONIOENCODING": "latin1"},
+        capture_output=True,
+        timeout=10,
+    )
+    assert result.returncode == 0 and not result.stderr
+    assert json.loads(result.stdout) == {"client_secret_stored": True}
+    with secrets.SecretStore(config.load_settings()).transaction() as txn:
+        assert txn.state.client_secret.get_secret_value() == "sentinel-Ø-secret"
+
+
+def test_json_controls_are_escaped_without_changing_values(capsys):
+    from dinero_cli.errors import CLIError
+
+    value = "Æble\x7f\x9b31m"
+    output.emit({"value": value}, json_mode=True)
+    output.emit_error(CLIError(value, details={"value": value}), json_mode=True)
+    captured = capsys.readouterr()
+    assert json.loads(captured.out) == {"value": value}
+    assert json.loads(captured.err)["message"] == value
+    assert "Æble" in captured.out
+    assert not any(127 <= ord(char) < 160 for char in captured.out + captured.err)
+
+
+def test_deep_config_produces_sanitized_error(cli, monkeypatch):
+    from dinero_cli.storage import atomic_write
+
+    atomic_write(config.config_directory() / "config.json", b"[" * 2000 + b"]" * 2000)
+
+    def excessive_depth(*args, **kwargs):
+        raise RecursionError()
+
+    with monkeypatch.context() as patch:
+        patch.setattr(config.json, "loads", excessive_depth)
+        result = cli.invoke(app, ["config", "list"])
+        assert result.exit_code == 2 and not result.stdout
+        assert "Configuration is not valid UTF-8 JSON" in result.stderr
+        result = cli.invoke(app, ["config", "list", "--json"])
+    assert result.exit_code == 2 and json.loads(result.stderr)["error"] is True

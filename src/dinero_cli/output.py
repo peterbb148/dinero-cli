@@ -76,7 +76,7 @@ def json_text(value: Any) -> str:
     try:
         text = json.dumps(value, ensure_ascii=False, allow_nan=False)
         text.encode("utf-8")
-        return text
+        return "".join(f"\\u{ord(char):04x}" if 127 <= ord(char) < 160 else char for char in text)
     except (TypeError, ValueError, RecursionError) as error:
         raise CLIError("Output cannot be represented as UTF-8 JSON.", code=5) from error
 
