@@ -46,3 +46,12 @@ records and CPython notices, and inspect changed library/CRT terms. Before upgra
 PyInstaller: verify its Analysis TOC schema and bootloader inventory. Native CI must
 produce and validate all four archives. Changes here, LICENSE, NOTICE or the notice
 collector are build inputs and therefore trigger a new minor release after merge.
+
+## Bundled GCC runtime
+
+Pydantic native extensions can cause PyInstaller to include `libgcc_s.so.1` on Linux.
+The inventory verifies ownership by the build host’s `libgcc-s1` package through dpkg,
+records its installed version and actual file hash, and includes the package copyright
+(with GCC Runtime Library Exception 3.1) and complete GPL-3 text. Other unidentified
+system libraries still fail the build. Linux builders therefore require the documented
+Ubuntu baseline and its installed package metadata/legal files.

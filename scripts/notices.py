@@ -5,6 +5,7 @@ import hashlib
 import importlib.metadata as metadata
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -27,7 +28,9 @@ def analysis_files(path: Path) -> list[tuple[str, Path, str]]:
             (name, Path(source).resolve(), kind)
             for index in (13, 14, 15, 18, 19)
             for name, source, kind in data[index]
-            if source
+            # PyInstaller uses '-' for source-free namespace packages. Their actual
+            # modules are separate entries; there is no file here to hash or distribute.
+            if source and not (source == "-" and kind == "PYMODULE")
         }
     )
 
@@ -41,6 +44,27 @@ def package_licenses(dist: metadata.Distribution) -> dict[str, bytes]:
     if not result:
         raise ValueError(f"No license files found for bundled distribution {dist.name}")
     return result
+
+
+def gcc_runtime(source: Path) -> tuple[str, dict[str, bytes]]:
+    """Identify Ubuntu's bundled libgcc through dpkg ownership and retain its exception."""
+    owner = subprocess.check_output(
+        ["dpkg-query", "--search", str(source)],
+        text=True,
+    ).strip()
+    package, separator, owned_path = owner.partition(": ")
+    if not separator or package.split(":")[0] != "libgcc-s1" or owned_path != str(source):
+        raise ValueError("Native libgcc input is not owned by the supported system package")
+    version = subprocess.check_output(
+        ["dpkg-query", "--show", "--showformat=${Version}", package],
+        text=True,
+    ).strip()
+    if not version:
+        raise ValueError("Native libgcc package version is missing")
+    return version, {
+        "COPYRIGHT.txt": Path("/usr/share/doc/libgcc-s1/copyright").read_bytes(),
+        "GPL-3.txt": Path("/usr/share/common-licenses/GPL-3").read_bytes(),
+    }
 
 
 def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
@@ -61,6 +85,7 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
         raise ValueError("Python runtime changed; refresh the reviewed runtime notices")
     members = {name: (root / name).read_bytes() for name in ("LICENSE", "NOTICE")}
     component_files: dict[str, list[dict[str, str]]] = {}
+    native: dict[str, tuple[str, dict[str, bytes]]] = {}
     distributions = {dist.name: dist for dist in metadata.distributions()}
     owners = {
         Path(str(dist.locate_file(file))).resolve(): name
@@ -95,6 +120,9 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
             owner = "application"
         elif source == root / "build/pyinstaller/dinero/base_library.zip":
             owner = "CPython"
+        elif kind == "BINARY" and source.name == "libgcc_s.so.1":
+            owner = "libgcc-s1"
+            native[owner] = gcc_runtime(source)
         else:
             raise ValueError(f"Unidentified bundled input: {name} ({source})")
         component_files.setdefault(owner, []).append({"name": name, "sha256": sha256(source)})
@@ -102,6 +130,7 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
     for name, inventory in sorted(component_files.items()):
         if name == "application":
             continue
+        license_expression = None
         if name == "CPython":
             component_version = record["version"] + "+" + record["build"]
             license_name = "CPython and bundled-library terms; see licenses/CPython"
@@ -110,11 +139,16 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
             texts["HACL.txt"] = (legal_root / "HACL.txt").read_bytes()
             if target.startswith("windows"):
                 texts["Microsoft-CRT.txt"] = (legal_root / "Microsoft-CRT.txt").read_bytes()
+        elif name in native:
+            component_version, texts = native[name]
+            license_name = "GPL with GCC runtime exception; see licenses/libgcc-s1"
+            license_expression = "GPL-3.0-or-later WITH GCC-exception-3.1"
         else:
             dist = distributions[name]
             component_version = dist.version
             license_name = f"See licenses/{name}"
             texts = package_licenses(dist)
+            license_expression = dist.metadata.get("License-Expression")
         for filename, content in texts.items():
             members[f"licenses/{name}/{filename}"] = content
         components.append(
@@ -124,8 +158,8 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
                 "name": name,
                 "version": component_version,
                 "licenses": (
-                    [{"expression": distributions[name].metadata["License-Expression"]}]
-                    if name != "CPython" and distributions[name].metadata.get("License-Expression")
+                    [{"expression": license_expression}]
+                    if license_expression
                     else [{"license": {"name": license_name}}]
                 ),
             }
@@ -166,6 +200,7 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
         "Its complete upstream notice set is included; presence of a notice does not claim "
         "every optional extension is shipped. BUNDLE-MANIFEST.json records the actual frozen "
         "module source and native-library input hashes, plus runtime archive provenance. "
-        "The SBOM is bound to the final executable hash. Host OS libraries are not distributed.\n"
+        "The SBOM is bound to the final executable hash. "
+        "Bundled system runtimes are listed explicitly.\n"
     ).encode()
     return members

@@ -94,13 +94,21 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
 
     def execute(args, **kwargs):
         calls.append((args, kwargs))
+        if args[1] == "config":
+            from typer.testing import CliRunner
+
+            from dinero_cli.cli import app
+
+            result = CliRunner().invoke(app, args[1:], env=kwargs["env"], input=kwargs.get("input"))
+            assert result.exit_code == 0, result.stderr
+            return subprocess.CompletedProcess(args, 0, stdout=result.stdout, stderr=result.stderr)
         return subprocess.CompletedProcess(
             args, 0, stdout="0.1.0" if args[-1] == "--version" else "--version", stderr=""
         )
 
     monkeypatch.setattr(build.subprocess, "run", execute)
     build.smoke(tmp_path / "dinero", "0.1.0")
-    assert len(calls) == 2
+    assert len(calls) == 8
     for _, settings in calls:
         assert settings["env"]["PATH"] == ""
         assert "PYTHONPATH" not in settings["env"]

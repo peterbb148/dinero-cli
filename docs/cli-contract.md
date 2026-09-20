@@ -1,8 +1,9 @@
 # CLI contract 1.0
 
 Status: implementation specification, ratified 2026-09-20 for issue #1. The executable
-currently exposes only help/version/completion; this document does not claim the planned
-commands exist. The [constitution](../.specify/memory/constitution.md) governs enforcement.
+currently exposes configuration commands and help/version/completion; this document does not
+claim the planned API/auth commands exist. The [constitution](../.specify/memory/constitution.md)
+governs enforcement.
 The [endpoint matrix](api/endpoint-matrix.md) specifies the planned dedicated API operations.
 
 ## Commands and input
