@@ -1,0 +1,783 @@
+{
+  "verified_at": "2026-09-20",
+  "source": "https://api.dinero.dk/openapi/v1/swagger.json",
+  "source_sha256": "a128a6a686eb2499db0cb418d6507b313fde42457a0cb3bd741d2afac70622da",
+  "api_origin": "https://api.dinero.dk",
+  "contract_version": "1.0",
+  "operations": [
+    {
+      "command": "organizations list",
+      "method": "GET",
+      "path": "/v1/organizations",
+      "path_arguments": [],
+      "organization": false,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "id,name,isPro"
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "contacts list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/contacts",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "name,contactGuid"
+          }
+        },
+        {
+          "option": "--query-filter",
+          "name": "queryFilter",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--changes-since",
+          "name": "changesSince",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--deleted-only",
+          "name": "deletedOnly",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        {
+          "option": "--page",
+          "name": "page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        },
+        {
+          "option": "--page-size",
+          "name": "pageSize",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "contacts get",
+      "method": "GET",
+      "path": "/v1/{organizationId}/contacts/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "contacts create",
+      "method": "POST",
+      "path": "/v1/{organizationId}/contacts",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": "ContactCreateModel"
+    },
+    {
+      "command": "contacts update",
+      "method": "PUT",
+      "path": "/v1/{organizationId}/contacts/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "ContactUpdateModel"
+    },
+    {
+      "command": "contacts delete",
+      "method": "DELETE",
+      "path": "/v1/{organizationId}/contacts/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "products list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/products",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "Name,ProductGuid"
+          }
+        },
+        {
+          "option": "--free-text-search",
+          "name": "freeTextSearch",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--query-filter",
+          "name": "queryFilter",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--changes-since",
+          "name": "changesSince",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--deleted-only",
+          "name": "deletedOnly",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        {
+          "option": "--page",
+          "name": "page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        },
+        {
+          "option": "--page-size",
+          "name": "pageSize",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "products get",
+      "method": "GET",
+      "path": "/v1/{organizationId}/products/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "products create",
+      "method": "POST",
+      "path": "/v1/{organizationId}/products",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": "ProductCreateModel"
+    },
+    {
+      "command": "products update",
+      "method": "PUT",
+      "path": "/v1/{organizationId}/products/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "ProductUpdateModel"
+    },
+    {
+      "command": "products delete",
+      "method": "DELETE",
+      "path": "/v1/{organizationId}/products/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "invoices list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/invoices",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--start-date",
+          "name": "startDate",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--end-date",
+          "name": "endDate",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--fields",
+          "name": "fields",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "Guid,ContactName,Date,Description"
+          }
+        },
+        {
+          "option": "--free-text-search",
+          "name": "freeTextSearch",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--status-filter",
+          "name": "statusFilter",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--query-filter",
+          "name": "queryFilter",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--changes-since",
+          "name": "changesSince",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "option": "--deleted-only",
+          "name": "deletedOnly",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        {
+          "option": "--page",
+          "name": "page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        },
+        {
+          "option": "--page-size",
+          "name": "pageSize",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          }
+        },
+        {
+          "option": "--sort",
+          "name": "sort",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "VoucherNumber,VoucherDate"
+          }
+        },
+        {
+          "option": "--sort-order",
+          "name": "sortOrder",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "descending"
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "invoices get",
+      "method": "GET",
+      "path": "/v1/{organizationId}/invoices/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "invoices create",
+      "method": "POST",
+      "path": "/v1/{organizationId}/invoices",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": "InvoiceCreateModel"
+    },
+    {
+      "command": "invoices update",
+      "method": "PUT",
+      "path": "/v1.2/{organizationId}/invoices/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "InvoiceUpdateModel"
+    },
+    {
+      "command": "invoices delete",
+      "method": "DELETE",
+      "path": "/v1/{organizationId}/invoices/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "TimestampObject"
+    },
+    {
+      "command": "invoices book",
+      "method": "POST",
+      "path": "/v1/{organizationId}/invoices/{guid}/book",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "BookModel"
+    },
+    {
+      "command": "invoices send",
+      "method": "POST",
+      "path": "/v1/{organizationId}/invoices/{guid}/email",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "ApiMailoutModel"
+    },
+    {
+      "command": "purchase-vouchers create",
+      "method": "POST",
+      "path": "/v1.2/{organizationId}/vouchers/purchase",
+      "path_arguments": [],
+      "organization": true,
+      "query": [],
+      "request_schema": "PurchaseVoucherCreateModelV2"
+    },
+    {
+      "command": "purchase-vouchers get",
+      "method": "GET",
+      "path": "/v1/{organizationId}/vouchers/purchase/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": null
+    },
+    {
+      "command": "purchase-vouchers update",
+      "method": "PUT",
+      "path": "/v1.1/{organizationId}/vouchers/purchase/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "PurchaseVoucherUpdateModel"
+    },
+    {
+      "command": "purchase-vouchers delete",
+      "method": "DELETE",
+      "path": "/v1/{organizationId}/vouchers/purchase/{guid}",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "TimestampObject"
+    },
+    {
+      "command": "purchase-vouchers book",
+      "method": "POST",
+      "path": "/v1/{organizationId}/vouchers/purchase/{guid}/book",
+      "path_arguments": [
+        "guid"
+      ],
+      "organization": true,
+      "query": [],
+      "request_schema": "BookModel"
+    },
+    {
+      "command": "entries list",
+      "method": "GET",
+      "path": "/v1/{organizationId}/entries",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--from-date",
+          "name": "fromDate",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "option": "--to-date",
+          "name": "toDate",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "option": "--include-primo",
+          "name": "includePrimo",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      ],
+      "request_schema": null
+    },
+    {
+      "command": "entries changes",
+      "method": "GET",
+      "path": "/v1/{organizationId}/entries/changes",
+      "path_arguments": [],
+      "organization": true,
+      "query": [
+        {
+          "option": "--changes-from",
+          "name": "changesFrom",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "option": "--changes-to",
+          "name": "changesTo",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "option": "--include-primo",
+          "name": "includePrimo",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      ],
+      "request_schema": null
+    }
+  ],
+  "request_summaries": {
+    "ContactCreateModel": {
+      "required": [
+        "CountryKey",
+        "IsMember",
+        "IsPerson",
+        "Name",
+        "UseCvr"
+      ],
+      "fields": [
+        "ContactGuid",
+        "ExternalReference",
+        "Name",
+        "Street",
+        "ZipCode",
+        "City",
+        "CountryKey",
+        "Phone",
+        "Email",
+        "Webpage",
+        "AttPerson",
+        "VatNumber",
+        "EanNumber",
+        "SENumber",
+        "PNumber",
+        "PaymentConditionType",
+        "PaymentConditionNumberOfDays",
+        "IsPerson",
+        "IsMember",
+        "MemberNumber",
+        "UseCvr",
+        "CompanyTypeKey",
+        "InvoiceMailOutOptionKey",
+        "PreferredInvoiceLanguageKey",
+        "PreferredInvoiceCurrencyKey"
+      ]
+    },
+    "ContactUpdateModel": {
+      "required": [
+        "CountryKey",
+        "IsMember",
+        "IsPerson",
+        "Name",
+        "UseCvr"
+      ],
+      "fields": [
+        "ExternalReference",
+        "Name",
+        "Street",
+        "ZipCode",
+        "City",
+        "CountryKey",
+        "Phone",
+        "Email",
+        "Webpage",
+        "AttPerson",
+        "VatNumber",
+        "EanNumber",
+        "SENumber",
+        "PNumber",
+        "PaymentConditionType",
+        "PaymentConditionNumberOfDays",
+        "IsPerson",
+        "IsMember",
+        "MemberNumber",
+        "UseCvr",
+        "CompanyTypeKey",
+        "InvoiceMailOutOptionKey",
+        "PreferredInvoiceLanguageKey",
+        "PreferredInvoiceCurrencyKey"
+      ]
+    },
+    "ProductCreateModel": {
+      "required": [
+        "AccountNumber",
+        "BaseAmountValue",
+        "Quantity",
+        "Unit"
+      ],
+      "fields": [
+        "ProductNumber",
+        "Name",
+        "BaseAmountValue",
+        "Quantity",
+        "AccountNumber",
+        "Unit",
+        "ExternalReference",
+        "Comment"
+      ]
+    },
+    "ProductUpdateModel": {
+      "required": [
+        "AccountNumber",
+        "BaseAmountValue",
+        "Quantity",
+        "Unit"
+      ],
+      "fields": [
+        "ProductNumber",
+        "Name",
+        "BaseAmountValue",
+        "Quantity",
+        "AccountNumber",
+        "Unit",
+        "ExternalReference",
+        "Comment"
+      ]
+    },
+    "InvoiceCreateModel": {
+      "required": [
+        "ProductLines"
+      ],
+      "fields": [
+        "PaymentConditionNumberOfDays",
+        "PaymentConditionType",
+        "ReminderFee",
+        "ReminderInterestRate",
+        "IsMobilePayInvoiceEnabled",
+        "IsPensoPayEnabled",
+        "ContactGuid",
+        "Guid",
+        "ShowLinesInclVat",
+        "InvoiceTemplateId",
+        "Currency",
+        "Language",
+        "ExternalReference",
+        "Description",
+        "Comment",
+        "Date",
+        "ProductLines",
+        "Address"
+      ]
+    },
+    "InvoiceUpdateModel": {
+      "required": [
+        "ProductLines",
+        "Timestamp"
+      ],
+      "fields": [
+        "Timestamp",
+        "PaymentConditionNumberOfDays",
+        "PaymentConditionType",
+        "ReminderFee",
+        "ReminderInterestRate",
+        "IsMobilePayInvoiceEnabled",
+        "IsPensoPayEnabled",
+        "ContactGuid",
+        "Guid",
+        "ShowLinesInclVat",
+        "InvoiceTemplateId",
+        "Currency",
+        "Language",
+        "ExternalReference",
+        "Description",
+        "Comment",
+        "Date",
+        "ProductLines",
+        "Address"
+      ]
+    },
+    "TimestampObject": {
+      "required": [],
+      "fields": [
+        "Timestamp"
+      ]
+    },
+    "BookModel": {
+      "required": [
+        "Timestamp"
+      ],
+      "fields": [
+        "Number",
+        "Timestamp"
+      ]
+    },
+    "ApiMailoutModel": {
+      "required": [
+        "ShouldAddTrustPilotEmailAsBcc"
+      ],
+      "fields": [
+        "Timestamp",
+        "Sender",
+        "CcToSender",
+        "Receiver",
+        "Subject",
+        "Message",
+        "AddVoucherAsPdfAttachment",
+        "ShouldAddTrustPilotEmailAsBcc"
+      ]
+    },
+    "PurchaseVoucherCreateModelV2": {
+      "required": [
+        "PurchaseType"
+      ],
+      "fields": [
+        "Lines",
+        "VoucherDate",
+        "DepositAccountNumber",
+        "RegionKey",
+        "FileGuid",
+        "ContactGuid",
+        "PaymentDate",
+        "PurchaseType",
+        "CurrencyKey",
+        "ExternalReference"
+      ]
+    },
+    "PurchaseVoucherUpdateModel": {
+      "required": [
+        "ContactGuid",
+        "Lines",
+        "PurchaseType",
+        "Timestamp",
+        "VoucherDate"
+      ],
+      "fields": [
+        "Lines",
+        "VoucherDate",
+        "Timestamp",
+        "DepositAccountNumber",
+        "RegionKey",
+        "FileGuid",
+        "ContactGuid",
+        "PaymentDate",
+        "PurchaseType",
+        "CurrencyKey",
+        "ExternalReference"
+      ]
+    }
+  }
+}

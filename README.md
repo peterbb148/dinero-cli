@@ -6,6 +6,12 @@ Dinero API/authentication commands are not implemented yet; see the repository i
 There is no official pip/PyPI release. The project is source available under Apache-2.0 **subject to Commons Clause 1.0**;
 see [LICENSE](LICENSE). It is not licensed under unrestricted Apache-2.0.
 
+## Implementation contract
+
+The planned CLI behavior is specified in [CLI contract](docs/cli-contract.md) and the
+[verified endpoint matrix](docs/api/endpoint-matrix.md). These describe the implementation
+target; use `dinero --help` to discover commands actually available in a binary.
+
 ## Development
 
 Install UV, then run:
