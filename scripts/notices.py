@@ -109,7 +109,7 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
         else:
             dist = distributions[name]
             component_version = dist.version
-            license_name = dist.metadata.get("License-Expression") or f"See licenses/{name}"
+            license_name = f"See licenses/{name}"
             texts = package_licenses(dist)
         for filename, content in texts.items():
             members[f"licenses/{name}/{filename}"] = content
@@ -119,7 +119,11 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
                 "bom-ref": name,
                 "name": name,
                 "version": component_version,
-                "licenses": [{"license": {"name": license_name}}],
+                "licenses": (
+                    [{"expression": distributions[name].metadata["License-Expression"]}]
+                    if name != "CPython" and distributions[name].metadata.get("License-Expression")
+                    else [{"license": {"name": license_name}}]
+                ),
             }
         )
     app = {

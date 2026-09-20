@@ -19,6 +19,7 @@ MARKER = "<!-- dinero-cd:v1 "
 TARGETS = ("linux-x86_64", "linux-arm64", "windows-x86_64", "windows-arm64")
 BUILD_FILES = {
     ".python-version",
+    ".gitattributes",
     "LICENSE",
     "NOTICE",
     "scripts/notices.py",

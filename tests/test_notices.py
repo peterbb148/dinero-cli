@@ -78,6 +78,7 @@ def inventory(tmp_path, monkeypatch):
         distribution("unused", ["unused.py", "LICENSE"]),
         distribution("dinero-cli", ["dinero_cli/_version.py"]),
     ]
+    deps[1].metadata["License-Expression"] = "MIT"
     write("packages/PyInstaller/bootloader/native/run.exe")
     deps[0].files.append("PyInstaller/bootloader/native/run.exe")
     toc = [[] for _ in range(21)]

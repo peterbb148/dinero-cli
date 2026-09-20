@@ -59,7 +59,7 @@ No 32-bit or musl/Alpine support is claimed. Extract the archive, place `dinero`
 and run `dinero --version`. No Python installation is required. Verify SHA256SUMS before
 replacing an existing binary; keep the previous binary to roll back.
 
-GHAS, repository rulesets/Copilot policy, are separate
+GHAS and repository rulesets/Copilot policy are separate
 issues (#15, #16). Do not treat this workflow PR as completion of those controls.
 
 ## Constitution and command contracts
