@@ -27,6 +27,7 @@ def test_native_resource_inventory_covers_every_dedicated_leaf():
 )
 def test_resource_smoke_rejects_regressions(tmp_path, fault):
     requests = []
+    token = "resource-smoke-test-only"
     cases = {tuple(args[:2]): (method, path, body) for args, method, path, body in resource_cases()}
 
     def invoke(args, code, source):
@@ -45,7 +46,7 @@ def test_resource_smoke_rejects_regressions(tmp_path, fault):
                 "WRONG" if fault == "wire" else method,
                 path,
                 b"{}" if fault == "body" else raw,
-                "Bearer sentinel",
+                "Bearer " + token,
             )
         )
         if fault == "count":
@@ -61,5 +62,16 @@ def test_resource_smoke_rejects_regressions(tmp_path, fault):
             "changed" if fault == "response" else None if method == "DELETE" else {"Name": "Æble"}
         )
 
-    with pytest.raises(ValueError, match="Native resource smoke failed"):
-        verify_resources(invoke, str(tmp_path), requests, "sentinel", {"Name": "Æble"})
+    expected = {
+        "response": "response fidelity",
+        "count": "hidden request or retry",
+        "wire": "method, path or authorization",
+        "body": "payload fidelity",
+        "error": "mutation error or replay",
+        "uncertain": "uncertain write diagnostic",
+        "rate": "rate limit detail",
+        "org": "organization override persisted",
+        "auth": "local auth status",
+    }
+    with pytest.raises(ValueError, match="Native resource smoke failed: " + expected[fault]):
+        verify_resources(invoke, str(tmp_path), requests, token, {"Name": "Æble"})

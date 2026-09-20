@@ -26,6 +26,8 @@ BUILD_FILES = {
     "pyproject.toml",
     "uv.lock",
     "scripts/build.py",
+    "scripts/smoke_api.py",
+    "scripts/smoke_resources.py",
     "scripts/entrypoint.py",
     "scripts/release.py",
     ".github/workflows/cd.yml",

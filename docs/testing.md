@@ -46,7 +46,9 @@ hatch remains covered by the local fixture; this is a product test, not an agent
 
 Adversarial tests deliberately corrupt the fixture results and confirm that the smoke checker
 fails. An inventory test fails when a new dedicated leaf lacks a native scenario. CI runs this
-suite before building; all four native jobs must pass before release publication. Documentation-only
+suite before building; all four native jobs must pass before release publication. Changes to the
+native smoke tools themselves are build inputs, so the revised checks execute on all four targets
+and produce a release verified under that gate. Documentation-only
 changes run test/security/review gates but do not build or create a release.
 
 Reproduce a native build on a supported host (OpenSSL on the build-host PATH):
