@@ -94,7 +94,7 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
 
     def execute(args, **kwargs):
         calls.append((args, kwargs))
-        if args[1] == "config":
+        if args[1] in {"config", "auth"}:
             from typer.testing import CliRunner
 
             from dinero_cli.cli import app
@@ -108,7 +108,7 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
 
     monkeypatch.setattr(build.subprocess, "run", execute)
     build.smoke(tmp_path / "dinero", "0.1.0")
-    assert len(calls) == 8
+    assert len(calls) == 10
     for _, settings in calls:
         assert settings["env"]["PATH"] == ""
         assert "PYTHONPATH" not in settings["env"]

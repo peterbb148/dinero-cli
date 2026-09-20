@@ -9,6 +9,7 @@ from typer._click.exceptions import ClickException
 from typer.core import Abort, TyperGroup
 
 from dinero_cli._version import VERSION
+from dinero_cli.commands.auth import app as auth_app
 from dinero_cli.commands.config import app as config_app
 from dinero_cli.errors import CLIError
 from dinero_cli.output import emit_error
@@ -62,6 +63,7 @@ app = typer.Typer(
     help="Dinero CLI. Discover commands using --help.",
 )
 app.add_typer(config_app, name="config")
+app.add_typer(auth_app, name="auth")
 
 
 @app.callback(invoke_without_command=True)

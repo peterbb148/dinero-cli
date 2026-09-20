@@ -83,6 +83,18 @@ def smoke(executable: Path, version: str) -> None:
 def smoke_config(executable: Path, environment: dict[str, str], directory: str) -> None:
     """Verify real config, JSON and credential roundtrips in each native binary."""
     cases = [
+        (
+            ["auth", "status", "--json"],
+            {
+                "authorized": False,
+                "access_token_valid": False,
+                "refresh_available": False,
+                "expires_at": None,
+                "configuration_matches": False,
+                "refresh_pending": False,
+            },
+            None,
+        ),
         (["config", "set", "organization", "123", "--json"], {"organization": "123"}, None),
         (["config", "get", "organization", "--json"], {"organization": "123"}, None),
         (
@@ -100,6 +112,7 @@ def smoke_config(executable: Path, environment: dict[str, str], directory: str) 
             {"client_secret_stored": True},
             "smoke-secret-two",
         ),
+        (["auth", "logout", "--json"], {"logged_out": True}, None),
     ]
     for arguments, expected, secret in cases:
         result = subprocess.run(

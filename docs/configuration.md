@@ -2,8 +2,8 @@
 
 `dinero config --help` lists all supported settings. Every leaf command accepts `--json`.
 Public configuration and credentials are separate; config output never reads the credential
-record. Login and API operations are delivered separately; setting a client secret does not
-contact Visma or grant authorization.
+record. Setting a client secret does not contact Visma or grant authorization;
+use [auth login](authentication.md) to authorize.
 
 ```sh
 dinero config set organization 12345
@@ -27,7 +27,7 @@ The eventual organization-dependent commands accept `--organization ID` for a si
 | --- | --- | --- |
 | organization | Not set | DINERO_ORGANIZATION |
 | client-id | Not set | DINERO_CLIENT_ID |
-| redirect-uri | http://127.0.0.1:8765/callback | DINERO_REDIRECT_URI |
+| redirect-uri | http://127.0.0.1:8765/callback (test); production uses registered HTTPS | DINERO_REDIRECT_URI |
 | scopes | dineropublicapi:read dineropublicapi:write offline_access | DINERO_SCOPES |
 | response-mode | form_post | DINERO_RESPONSE_MODE |
 | pkce | true | DINERO_PKCE |
@@ -96,9 +96,9 @@ Protection is platform-specific and is not silently substituted:
   to decrypt it; copying the file to another account or machine is not a portable credential
   bootstrap. DPAPI failure is a failure, never a plaintext fallback.
 
-The process lock covers the whole credential transaction, including a future token refresh
+The process lock covers the whole credential transaction, including token refresh
 and persistence of the replacement token. A competing command waits up to ten seconds and
-then reports a clear busy error. OAuth rotation behavior itself is implemented in #4.
+then reports a clear busy error. See [authentication](authentication.md) for rotation and recovery.
 A failed save never produces a successful storage response. Test credentials and state used
 by the native build smoke tests live only in a temporary directory and are removed afterward.
 

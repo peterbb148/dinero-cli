@@ -85,12 +85,14 @@ class Settings(BaseModel):
     @field_validator("redirect_uri")
     @classmethod
     def redirect(cls, value: str) -> str:
-        """Accept an explicit local callback that the Visma application must register."""
+        """Accept a registered HTTPS handler or an explicit loopback test callback."""
         url = urlsplit(value)
+        secure = url.scheme == "https" and bool(url.hostname)
+        if secure:
+            https_origin(f"https://{url.netloc}")
+        loopback = url.scheme == "http" and url.hostname == "127.0.0.1" and bool(url.port)
         if (
-            url.scheme != "http"
-            or url.hostname != "127.0.0.1"
-            or not url.port
+            not (secure or loopback)
             or url.username is not None
             or url.password is not None
             or url.query
@@ -99,7 +101,7 @@ class Settings(BaseModel):
             or "\\" in value
             or any(char.isspace() for char in value)
         ):
-            raise ValueError("Expected a registered http://127.0.0.1:PORT/PATH callback")
+            raise ValueError("Expected a registered HTTPS or http://127.0.0.1:PORT/PATH callback")
         return value
 
 
