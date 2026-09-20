@@ -79,6 +79,9 @@ def smoke(executable: Path, version: str) -> None:
             if expected not in result.stdout or result.stderr:
                 raise ValueError(f"Standalone smoke test failed: {option}")
         smoke_config(executable, environment, directory)
+        from scripts.smoke_api import smoke_api
+
+        smoke_api(executable, environment, directory)
 
 
 def smoke_config(executable: Path, environment: dict[str, str], directory: str) -> None:

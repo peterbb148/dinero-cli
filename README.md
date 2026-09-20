@@ -27,8 +27,9 @@ uv run ruff check .
 uv run ruff format --check .
 uv run mypy
 uv run pytest --cov --cov-report=term-missing
-uv sync --locked --group build
-uv run python -m scripts.build build
+uv sync --locked --no-dev --group build
+uv run --no-sync python -m scripts.build build
+uv sync --locked  # restore development tools
 ```
 
 ## Builds and releases
@@ -68,8 +69,9 @@ No 32-bit or musl/Alpine support is claimed. Extract the archive, place `dinero`
 and run `dinero --version`. No Python installation is required. Verify SHA256SUMS before
 replacing an existing binary; keep the previous binary to roll back.
 
-GHAS and repository rulesets/Copilot policy are separate
-issues (#15, #16). Do not treat this workflow PR as completion of those controls.
+See [installation, upgrades and removal](docs/installation.md) for platform-specific steps.
+GHAS/security checks and the current-head Copilot review gate are enforced alongside
+`PR gate` by the protected-main ruleset. Changes reach main through reviewed PRs.
 
 ## Constitution and command contracts
 
@@ -87,8 +89,8 @@ uv run --locked pytest -q -s tests/contracts
 
 Hooks run the locked Ruff lint/formatter and offline command contracts. Ruff may fix files;
 review and stage those changes before retrying the commit. CI runs the same hooks and the
-full test/coverage suite. Configure the required `PR gate` ruleset to enforce this at merge
-(issue #16); local hooks alone cannot prevent bypass with `--no-verify`.
+full test/coverage suite. The required `PR gate` ruleset enforces this at merge; local hooks alone cannot prevent
+bypass with `--no-verify`.
 
 For each new command:
 
