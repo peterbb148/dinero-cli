@@ -75,6 +75,18 @@ def smoke(executable: Path, version: str) -> None:
                 raise ValueError(f"Standalone smoke test failed: {option}")
 
 
+def freezer_environment(target: str) -> dict[str, str]:
+    """Keep unrelated runner software out of Windows DLL dependency discovery."""
+    environment = os.environ.copy()
+    if target.startswith("windows"):
+        windows = Path(environment["SystemRoot"])
+        environment["PATH"] = os.pathsep.join(
+            str(p)
+            for p in (Path(sys.base_prefix), Path(sys.base_prefix) / "DLLs", windows / "System32")
+        )
+    return environment
+
+
 def build(version: str, target: str) -> Path:
     """Freeze, smoke-test and archive the native executable, restoring source version."""
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:\.dev[0-9]+)?", version):
@@ -106,6 +118,7 @@ def build(version: str, target: str) -> Path:
                 "scripts/entrypoint.py",
             ],
             check=True,
+            env=freezer_environment(target),
         )
         exe = Path("dist/bin") / ("dinero.exe" if target.startswith("windows") else "dinero")
         verify_machine(exe, target)
