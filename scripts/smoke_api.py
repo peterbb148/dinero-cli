@@ -16,6 +16,7 @@ from dinero_cli.auth import TokenRecord
 from dinero_cli.config import Settings
 from dinero_cli.secrets import SecretStore
 from dinero_cli.storage import atomic_write
+from scripts.smoke_resources import verify_resources
 
 TOKEN = "native-smoke-access-token"
 PAYLOAD = {"ContactGuid": "fixture", "Lines": [{"Description": "Æble", "Amount": 12.5}]}
@@ -71,8 +72,16 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
         def respond(self) -> None:
             body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
             requests.append((self.command, self.path, body, self.headers.get("Authorization")))
+            failure = json.loads(body).get("__smoke_failure") if body else None
+            if failure == "disconnect":
+                self.close_connection = True
+                return
             status = (
-                400
+                409
+                if failure == "conflict"
+                else 429
+                if failure == "rate"
+                else 400
                 if self.path.endswith("/error")
                 else 429
                 if self.path.endswith("/rate")
@@ -82,7 +91,7 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
             )
             value: Any = (
                 {"Message": "Rejected " + TOKEN}
-                if status == 400
+                if status in (400, 409)
                 else {"Message": "Limited"}
                 if status == 429
                 else PAYLOAD
@@ -208,7 +217,8 @@ def verify_flow(
             raise ValueError("Native API smoke failed: rate limit details")
     invoke(["api", "post", path, "--input", "-"], 2, '{"Name":NaN}')
     invoke(["api", "get", "https://elsewhere.invalid/"], 2)
+    resource_count = verify_resources(invoke, directory, requests, TOKEN, PAYLOAD)
     invoke(["auth", "logout"])
     invoke(["api", "get", path], 3)
-    if len(requests) != 7:
+    if len(requests) != 7 + resource_count:
         raise ValueError("Native API smoke failed: unexpected request or retry")

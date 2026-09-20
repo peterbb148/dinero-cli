@@ -34,6 +34,9 @@ uv run --no-sync python -m scripts.build build
 uv sync --locked  # restore development tools
 ```
 
+See [quality evidence and optional test-company smoke](docs/testing.md) for the automated
+boundaries and separate live prerequisites.
+
 ## Builds and releases
 
 - Every PR runs tests, lint, typing and measured coverage (minimum 81%). `PR gate`
