@@ -8,7 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_security_jobs_use_safe_events_and_minimal_permissions():
-    workflow = yaml.load((ROOT / ".github/workflows/security.yml").read_text(), yaml.BaseLoader)
+    workflow = yaml.load(
+        (ROOT / ".github/workflows/security.yml").read_text(), Loader=yaml.BaseLoader
+    )
     assert set(workflow["on"]) == {"pull_request", "push", "schedule", "workflow_dispatch"}
     assert workflow["permissions"] == {"contents": "read"}
     assert workflow["jobs"]["codeql"]["permissions"] == {
