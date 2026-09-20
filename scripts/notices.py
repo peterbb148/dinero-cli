@@ -87,7 +87,11 @@ def collect(version: str, target: str, executable: Path) -> dict[str, bytes]:
                 owner = "application"
         elif source.is_relative_to(runtime) and "site-packages" not in source.parts:
             owner = "CPython"
-        elif source.is_relative_to(root / "src") or source == root / "scripts/entrypoint.py":
+        elif (
+            source.is_relative_to(root / "src")
+            or source.is_relative_to(root / "assets")
+            or source == root / "scripts/entrypoint.py"
+        ):
             owner = "application"
         elif source == root / "build/pyinstaller/dinero/base_library.zip":
             owner = "CPython"

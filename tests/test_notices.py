@@ -55,6 +55,7 @@ def inventory(tmp_path, monkeypatch):
         write("packaging/python-licenses/" + name)
     for name in (
         "src/dinero_cli/cli.py",
+        "assets/icon.png",
         "scripts/entrypoint.py",
         "runtime/python.dll",
         "build/pyinstaller/dinero/base_library.zip",
@@ -101,6 +102,10 @@ def test_manifest_licenses_and_sbom_match_actual_inputs(inventory, target):
     assert bom["metadata"]["component"]["licenses"] == [{"expression": notices.LICENSE_ID}]
     manifest = json.loads(members["BUNDLE-MANIFEST.json"])
     assert manifest["executable_sha256"] == notices.sha256(inventory.executable)
+    assert {
+        "name": "assets/icon.png",
+        "sha256": notices.sha256(inventory.files["assets/icon.png"]),
+    } in manifest["inputs"]["application"]
     assert str(Path.cwd()).encode() not in members["BUNDLE-MANIFEST.json"]
     assert "licenses/typer/typer/_click/LICENSE.txt" in members
     assert "licenses/typer/licenses/AUTHORS" in members
