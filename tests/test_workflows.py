@@ -14,7 +14,6 @@ def test_docs_changes_can_finish_required_pr_gate_without_binary_jobs():
     assert "paths" not in (ci["on"]["pull_request"] or {})
     assert ci["jobs"]["gate"]["if"] == "always()"
     assert ci["jobs"]["binaries"]["if"] == "needs.changes.outputs.build == 'true'"
-    assert ci["jobs"]["changes"]["permissions"] if "permissions" in ci["jobs"]["changes"] else True
     assert ci["permissions"] == {"contents": "read"}
     assert "upload" not in ci["jobs"]["binaries"]["with"]
 

@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Also parse/validate this workflow on PRs; all mutating jobs require main.
+  pull_request:
+    paths: ['.github/workflows/cd.yml']
 permissions:
   contents: read
 concurrency:
@@ -32,6 +35,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: uv run --no-project python -m scripts.release plan
+      - name: Retry retention without creating a version
+        if: steps.plan.outputs.build == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uv run --no-project python -m scripts.release cleanup
   tests:
     needs: plan
     if: needs.plan.outputs.build == 'true'

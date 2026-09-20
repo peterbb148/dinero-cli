@@ -72,6 +72,7 @@ def test_invalid_binary_header(tmp_path, target):
 )
 def test_native_interpreter_selection(monkeypatch, system, machine, target):
     monkeypatch.setattr(sys, "platform", system)
+    monkeypatch.setattr(build.sysconfig, "get_platform", lambda: "win-" + machine.lower())
     monkeypatch.setattr(build.platform, "machine", lambda: machine)
     assert build.native_target() == target
 
@@ -89,6 +90,7 @@ def test_unsupported_native_target(monkeypatch):
 def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
     calls = []
     monkeypatch.setenv("PYTHONPATH", "something")
+    monkeypatch.setenv("FORCE_COLOR", "1")
 
     def execute(args, **kwargs):
         calls.append((args, kwargs))
@@ -102,6 +104,8 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
     for _, settings in calls:
         assert settings["env"]["PATH"] == ""
         assert "PYTHONPATH" not in settings["env"]
+        assert "FORCE_COLOR" not in settings["env"]
+        assert settings["env"]["NO_COLOR"] == "1"
         assert Path(settings["cwd"]) != Path.cwd()
     monkeypatch.setattr(
         build.subprocess,
@@ -166,3 +170,10 @@ def test_main_calls_cli(monkeypatch):
     monkeypatch.setattr(cli, "app", application)
     cli.main()
     application.assert_called_once_with()
+
+
+def test_windows_emulation_reports_interpreter_architecture(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "win32")
+    monkeypatch.setattr(build.platform, "machine", lambda: "ARM64")
+    monkeypatch.setattr(build.sysconfig, "get_platform", lambda: "win-amd64")
+    assert build.native_target() == "windows-x86_64"

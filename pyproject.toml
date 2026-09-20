@@ -11,7 +11,7 @@ dependencies = [
 dinero = "dinero_cli.cli:main"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling==1.29.0"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
@@ -43,6 +43,7 @@ check_untyped_defs = true
 
 [dependency-groups]
 build = [
+    "hatchling==1.29.0",
     "pyinstaller>=6.22,<7",
 ]
 dev = [

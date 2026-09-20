@@ -22,12 +22,16 @@ jobs:
         include:
           - runner: ubuntu-24.04
             target: linux-x86_64
+            python-platform: linux-x86_64-gnu
           - runner: ubuntu-24.04-arm
             target: linux-arm64
+            python-platform: linux-aarch64-gnu
           - runner: windows-2022
             target: windows-x86_64
+            python-platform: windows-x86_64-none
           - runner: windows-11-arm
             target: windows-arm64
+            python-platform: windows-aarch64-none
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -38,7 +42,11 @@ jobs:
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           enable-cache: false
-      - run: uv sync --locked --no-dev --group build
+      - name: Select native Python and install locked build dependencies
+        env:
+          PYTHON_PLATFORM: ${{ matrix.python-platform }}
+        shell: bash
+        run: uv sync --locked --no-dev --group build --managed-python --python "cpython-$(cat .python-version)-$PYTHON_PLATFORM"
       - name: Build and test standalone executable
         env:
           BUILD_VERSION: ${{ inputs.version }}

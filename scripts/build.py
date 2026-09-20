@@ -9,6 +9,7 @@ import re
 import struct
 import subprocess
 import sys
+import sysconfig
 import tempfile
 import zipfile
 from pathlib import Path
@@ -20,7 +21,10 @@ def native_target() -> str:
     """Require a supported 64-bit native interpreter and operating system."""
     if sys.platform not in {"linux", "win32"} or sys.maxsize <= 2**32:
         raise ValueError("Build requires 64-bit Windows or Linux")
-    arch = ARCHES.get(platform.machine().lower())
+    machine = platform.machine().lower()
+    if sys.platform == "win32":
+        machine = sysconfig.get_platform().removeprefix("win-")
+    arch = ARCHES.get(machine)
     if arch is None:
         raise ValueError("Unsupported native architecture")
     return f"{'windows' if sys.platform == 'win32' else 'linux'}-{arch}"
@@ -31,15 +35,15 @@ def verify_machine(executable: Path, target: str) -> None:
     data = executable.read_bytes()
     arch = target.rsplit("-", 1)[1]
     if target.startswith("linux-"):
-        if data[:6] != b"\x7fELF\x02\x01":
+        if len(data) < 64 or data[:6] != b"\x7fELF\x02\x01":
             raise ValueError("Expected little-endian ELF64")
         machine = struct.unpack_from("<H", data, 18)[0]
         expected = {"x86_64": 62, "arm64": 183}[arch]
     else:
-        if data[:2] != b"MZ":
+        if len(data) < 64 or data[:2] != b"MZ":
             raise ValueError("Expected Windows executable")
         offset = struct.unpack_from("<I", data, 60)[0]
-        if data[offset : offset + 4] != b"PE\0\0":
+        if offset + 6 > len(data) or data[offset : offset + 4] != b"PE\0\0":
             raise ValueError("Invalid PE signature")
         machine = struct.unpack_from("<H", data, offset + 4)[0]
         expected = {"x86_64": 0x8664, "arm64": 0xAA64}[arch]
@@ -51,6 +55,10 @@ def smoke(executable: Path, version: str) -> None:
     """Run the binary outside the checkout with no Python on PATH."""
     environment = os.environ.copy()
     environment["PATH"] = ""
+    environment["NO_COLOR"] = "1"
+    environment["TERM"] = "dumb"
+    environment.pop("FORCE_COLOR", None)
+    environment.pop("CLICOLOR_FORCE", None)
     environment.pop("PYTHONPATH", None)
     environment.pop("PYTHONHOME", None)
     with tempfile.TemporaryDirectory() as directory:
