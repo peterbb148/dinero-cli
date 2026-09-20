@@ -13,6 +13,15 @@ selected through `--organization ID` or saved configuration. Organizations list 
 config/auth operations do not require a selected organization. Missing context fails before
 an API request. No fuzzy organization selection or automatic selection of the first account.
 
+Setting precedence is: explicit command option > corresponding `DINERO_*` environment
+variable > saved config > built-in default. Unset values do not override lower layers; an
+explicit empty/invalid value is an error, not a fallback. For organization this is
+`--organization` > `DINERO_ORGANIZATION` > saved `organization`; there is no built-in default.
+`--json` selects JSON regardless of environment/saved output preference. Reads expose resolved
+non-secret configuration; config writes change only the named saved field, never persist the
+environment as a side effect. Trust allowlists are an exception: only explicit saved config
+changes can extend them, never an environment override.
+
 Query options preserve Dinero names on the wire. JSON keys and response field casing remain
 unchanged. Domain terms such as ContactGuid, Voucher, Entry and Invoice are not translated.
 CLI names use lower-case kebab-case. No local accounting/tax/payment business logic is added.
@@ -98,8 +107,16 @@ placeholder. Reject unsupported placeholders, absolute/network-path URLs, fragme
 embedded credentials, backslashes and traversal. Supply query parameters through --query,
 not an embedded query string. No arbitrary auth/header override is offered.
 
-Default origin is `https://api.dinero.dk`; validate any configured override and bind bearer
-tokens to that origin. Follow no redirects with credentials. Use explicit timeouts. One
+Default origin is `https://api.dinero.dk`. Base URLs and trusted origins require HTTPS with
+a hostname and valid port, no userinfo, query or fragment; the base is an origin (no path
+prefix). TLS certificate verification is always enabled. The saved trusted-origin allowlist
+initially contains only `https://api.dinero.dk:443`. A different origin requires an explicit
+saved allowlist addition before any authenticated request; changing the base URL or its
+environment override alone never authorizes bearer forwarding. Normalize scheme/hostname
+and effective port for comparison. Record the authorized API origin with tokens; changing
+it requires new authorization, rather than forwarding an existing token to the new host.
+Reject origins outside the allowlist before token refresh or request construction.
+Follow no redirects with credentials. Use explicit timeouts. One
 command sends one API operation, apart from necessary token refresh. Initially no automatic
 HTTP retries, including on 429, are performed: return exit 6 and safely expose Retry-After
 when present. Any future bounded retry policy must be explicit and must not replay writes.

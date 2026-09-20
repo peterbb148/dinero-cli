@@ -50,7 +50,10 @@ This specifies the planned first resource release; these commands are not implem
 Kebab-case options map to the exact camel/Pascal-case API names; the JSON extraction is authoritative
 for query mapping (for example `--page-size` → `pageSize`, `--include-primo` → `includePrimo`).
 Only explicitly supplied query options are transmitted, leaving defaults to Dinero. Expose boolean
-options so true and false can both be sent. Pagination is zero-based, pageSize is 1–1000 where
+options as paired flags: `--deleted-only` sends `deletedOnly=true`, `--no-deleted-only`
+sends `deletedOnly=false`, and omission sends neither. Similarly use `--include-primo` /
+`--no-include-primo`; reject supplying both members of a pair. This distinction preserves
+server defaults, including includePrimo=true. Pagination is zero-based, pageSize is 1–1000 where
 supported, and one invocation fetches one page; there is no hidden auto-pagination.
 
 Use `--input FILE` or `--input -` for every operation with a JSON body, including DELETE.
