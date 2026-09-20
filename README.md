@@ -3,8 +3,8 @@
 A Python/Typer CLI distributed as standalone Windows and Linux executables.
 This initial milestone implements the executable foundation and conditional CD.
 Dinero API/authentication commands are not implemented yet; see the repository issues.
-There is no official pip/PyPI release. The project license is awaiting the owner's choice
-in issue #17; no open-source license is asserted by this PR.
+There is no official pip/PyPI release. The project is source available under Apache-2.0 **subject to Commons Clause 1.0**;
+see [LICENSE](LICENSE). It is not licensed under unrestricted Apache-2.0.
 
 ## Development
 
@@ -59,8 +59,8 @@ No 32-bit or musl/Alpine support is claimed. Extract the archive, place `dinero`
 and run `dinero --version`. No Python installation is required. Verify SHA256SUMS before
 replacing an existing binary; keep the previous binary to roll back.
 
-GHAS, repository rulesets/Copilot policy, final licensing/notices and SBOM are separate
-issues (#15, #16, #17). Do not treat this workflow PR as completion of those controls.
+GHAS, repository rulesets/Copilot policy, are separate
+issues (#15, #16). Do not treat this workflow PR as completion of those controls.
 
 ## Constitution and command contracts
 
@@ -105,3 +105,24 @@ only help/version and Typer completion controls exist. Completion callbacks run 
 lookup/installation mocked. These tests do not prove visual quality, every possible secret
 path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations
 to review. Governance, tests, hooks and development-only dependencies are not binary inputs.
+
+## License and redistribution
+
+Apache-2.0 with Commons Clause 1.0 permits use and modification, including internal
+business use. It excludes selling a product or service whose value derives entirely
+or substantially from this software, including relevant hosting/support fees.
+A larger product with substantial independent value may still be sold. Read the
+[complete terms](LICENSE) and [Commons Clause explanation](https://commonsclause.com/).
+This is source available, not OSI open source. Third-party licenses remain independent;
+no rights to Dinero/Visma services or trademarks are granted.
+
+Every new native archive includes LICENSE, NOTICE, complete third-party notices,
+SBOM.cdx.json (CycloneDX 1.6), and BUNDLE-MANIFEST.json. These identify actually frozen
+Python distributions, the CPython runtime/build, the bootloader and the final executable
+hash. The manifest records source/native input hashes without local absolute paths.
+The runtime is an aggregate component, not a claim to a separately versioned SBOM for
+every statically linked sublibrary. All upstream runtime notices are retained.
+
+See [packaging/README.md](packaging/README.md) before changing Python or dependencies.
+The older v0.1.0 archives predate this packaging; these new documents are not claimed
+to be present in that release.

@@ -110,11 +110,16 @@ def build(version: str, target: str) -> Path:
         exe = Path("dist/bin") / ("dinero.exe" if target.startswith("windows") else "dinero")
         verify_machine(exe, target)
         smoke(exe, version)
+        from scripts.notices import collect
+
+        legal = collect(version, target, exe)
         directory = Path("dist/archives")
         directory.mkdir(parents=True, exist_ok=True)
         archive = directory / f"dinero-v{version}-{target}.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
             output.write(exe, exe.name)
+            for name, content in legal.items():
+                output.writestr(name, content)
             output.writestr("BUILD.json", json.dumps({"version": version, "target": target}))
         return archive
     finally:

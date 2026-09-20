@@ -19,6 +19,9 @@ MARKER = "<!-- dinero-cd:v1 "
 TARGETS = ("linux-x86_64", "linux-arm64", "windows-x86_64", "windows-arm64")
 BUILD_FILES = {
     ".python-version",
+    "LICENSE",
+    "NOTICE",
+    "scripts/notices.py",
     "pyproject.toml",
     "uv.lock",
     "scripts/build.py",

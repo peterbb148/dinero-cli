@@ -131,6 +131,7 @@ def test_packaging_restores_source_and_archives_real_binary(tmp_path, monkeypatc
 
     monkeypatch.setattr(build.subprocess, "run", freezer)
     monkeypatch.setattr(build, "smoke", lambda *args: None)
+    monkeypatch.setattr("scripts.notices.collect", lambda *args: {"LICENSE": b"License"})
     archive = build.build("0.1.0", "linux-x86_64")
     assert path.read_text() == "original"
     with zipfile.ZipFile(archive) as bundle:
