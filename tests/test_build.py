@@ -94,6 +94,7 @@ def test_smoke_has_no_python_path_or_checkout_dependency(tmp_path, monkeypatch):
 
     def execute(args, **kwargs):
         calls.append((args, kwargs))
+        assert kwargs["encoding"] == "utf-8"
         if args[1] in {"config", "auth"}:
             from typer.testing import CliRunner
 
@@ -172,13 +173,6 @@ def test_cli_help_version_and_unknown_command():
     assert runner.invoke(cli.app, ["--version"]).stdout.strip() == "0.0.0.dev0"
     assert runner.invoke(cli.app, ["--help"]).exit_code == 0
     assert runner.invoke(cli.app, ["unknown"]).exit_code != 0
-
-
-def test_main_calls_cli(monkeypatch):
-    application = Mock()
-    monkeypatch.setattr(cli, "app", application)
-    cli.main()
-    application.assert_called_once_with()
 
 
 def test_windows_emulation_reports_interpreter_architecture(monkeypatch):

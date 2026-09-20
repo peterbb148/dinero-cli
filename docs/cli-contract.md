@@ -153,3 +153,26 @@ Live bookkeeping is never part of automated tests or initial setup.
 Exit codes, payload collision policy, command names and chosen endpoint versions are CLI
 contract decisions. Review changes in a PR, update this version and the command-contract tests;
 do not silently reinterpret established scripting behavior.
+
+## Implemented output boundary
+
+The executable uses UTF-8 for stdout/stderr, including redirected Windows output. Each JSON
+result is serialized completely before it is written; unsupported values cannot produce a
+partial JSON document. Terminal presentation escapes control characters in values, keys and
+remote error messages. Human API errors show HTTP status and safe details on stderr.
+
+Parser errors honor a valid environment/saved output preference as well as `--json`. If the
+configuration cannot be read or validated, its output preference cannot be used; the error is
+still reported, with `--json` guaranteeing a JSON envelope even for broken configuration.
+Changing the saved output preference does not override an active `DINERO_OUTPUT` value.
+
+Ctrl-C and input interruption return 130 with one safe diagnostic. Closed stdout/stderr pipes
+return 5 quietly, including renderer shutdown, with no additional traceback. Unexpected internal
+exceptions reach a sanitized process-level exception hook and exit 1; their values, locals and
+tracebacks are never emitted by the executable. This is a failure boundary, not an alternate
+success path. Direct Python-library callers retain ordinary exceptions for debugging.
+
+The shared payload reader accepts strict UTF-8 JSON objects from a file or `--input -`, rejecting
+duplicate keys, non-finite numbers, invalid Unicode and unsupported nesting before API execution.
+The escape-hatch commands will use it when #7 is implemented. Actual subprocess tests complement
+the command registry for process encoding, pipeline closure and unexpected-failure behavior.

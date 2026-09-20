@@ -1,5 +1,6 @@
 """Non-interactive configuration commands using common services and output."""
 
+import os
 import sys
 from pathlib import Path
 from typing import Annotated
@@ -38,7 +39,10 @@ def set_config(key: str, value: str, json_output: Json = False) -> None:
     """Change one saved public setting. Secrets must use set-client-secret."""
     settings = load_settings()
     result = save_setting(key, value)
-    emit(result, json_mode=json_output or result.get("output", settings.output) == "json")
+    preferred = (
+        settings.output if "DINERO_OUTPUT" in os.environ else result.get("output", settings.output)
+    )
+    emit(result, json_mode=json_output or preferred == "json")
 
 
 @app.command("set-client-secret")
@@ -51,7 +55,7 @@ def set_client_secret(
     store = SecretStore(settings)
     try:
         if input_file == "-":
-            value = sys.stdin.read()
+            value = sys.stdin.buffer.read().decode("utf-8")
         else:
             path = Path(input_file)
             check_private(path)

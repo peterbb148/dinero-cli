@@ -132,7 +132,7 @@ def saved_values(directory: Path | None = None) -> dict[str, Any]:
         raw = json.loads(read_private(path).decode("utf-8"))
     except FileNotFoundError:
         return {}
-    except (ValueError, UnicodeError) as error:
+    except (ValueError, UnicodeError, RecursionError) as error:
         raise CLIError("Configuration is not valid UTF-8 JSON.") from error
     if not isinstance(raw, dict):
         raise CLIError("Configuration must be a JSON object.")
