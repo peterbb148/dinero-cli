@@ -5,6 +5,7 @@ from pathlib import Path
 from api_cases import CONTRACTS as API_CONTRACTS
 from auth_cases import CONTRACTS as AUTH_CONTRACTS
 from config_cases import CONTRACTS
+from read_cases import CONTRACTS as READ_CONTRACTS
 from resource_cases import CONTRACTS as RESOURCE_CONTRACTS
 from typer import completion
 
@@ -19,6 +20,7 @@ REGISTRY = {
     **AUTH_CONTRACTS,
     **API_CONTRACTS,
     **RESOURCE_CONTRACTS,
+    **READ_CONTRACTS,
     (): Contract(
         kind="group",
         options=frozenset({"--version", "--install-completion", "--show-completion"}),
@@ -38,4 +40,4 @@ def test_production_command_contracts(monkeypatch):
     monkeypatch.setattr(completion, "install", lambda: ("bash", Path("fixture-completion.sh")))
     report = check(app, REGISTRY, secrets=("contract-access-token", "contract-client-secret"))
     print(report)
-    assert report == "CLI contracts: 30 command nodes, 23 data commands"
+    assert report == "CLI contracts: 43 command nodes, 31 data commands"

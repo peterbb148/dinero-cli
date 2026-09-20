@@ -44,3 +44,27 @@ for command verification.
 
 Agents must use these dedicated commands. If a required operation is not implemented, add it
 through the issue/PR workflow before agent use; do not use the raw escape hatch or direct HTTP.
+
+## Accounting reads
+
+```sh
+dinero entries list --organization 123 --from-date 2026-01-01 --to-date 2026-09-20 --no-include-primo --json
+dinero entries changes --organization 123 --changes-from 2026-09-01T00:00:00Z --json
+dinero accounts entry --organization 123 --fields AccountNumber,Name,VatCode,Category,IsHidden --json
+dinero accounts purchase --organization 123 --json
+dinero accounts deposit --organization 123 --fields AccountNumber,Name,IsDefault,IsHidden --json
+dinero accounting-years list --organization 123 --json
+dinero vat-types list --organization 123 --json
+dinero files list --organization 123 --file-status Unused --page 0 --page-size 1000 --json
+```
+
+Dates for entries use ISO date/date-time syntax and are sent unchanged, including offsets.
+Neither a period nor includePrimo is invented: omit it to preserve Dinero's default, or specify
+`--include-primo`/`--no-include-primo`. Opposing flags fail. These entry/lookup endpoints have no
+pagination or generic query filter. Only entry accounts expose `--category-filter`.
+
+Files return archive metadata and links, not PDF/image bytes. Filters are `--extensions`
+(comma-separated), `--uploaded-before`/`--uploaded-after` (YYYY/MM/DD), and
+`--file-status All|Used|Unused`. File pagination is explicit and only one page is retrieved.
+An unused file can be a duplicate, invoice, receipt or unrelated attachment; its presence alone
+does not prove that a separate expense remains to be booked. No read command mutates records.

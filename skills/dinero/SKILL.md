@@ -21,8 +21,12 @@ The current CLI has:
 - `organizations list`: discover accessible organizations.
 - `contacts list|get|create|update|delete`: contact operations.
 - `products list|get|create|update|delete`: product operations.
+- `entries list|changes`: accounting entries and changes with explicit date filters.
+- `accounts entry|purchase|deposit`: account views with endpoint-specific filters.
+- `accounting-years list` and `vat-types list`: accounting lookup data.
+- `files list`: one page of document archive metadata.
 
-Invoices, purchase vouchers and entries commands are planned, not yet available.
+Invoice and purchase voucher commands are planned, not yet available.
 Agents must use dedicated resource commands. Do not use `dinero api`, curl, handwritten HTTP
 or Python imports to access accounting data. If the needed operation has no dedicated command,
 report the missing capability and implement it through the repository workflow before using it.
@@ -96,6 +100,25 @@ Use documented kebab-case query options such as `--query-filter`, `--changes-sin
 `--page` and `--page-size`. Omitted values preserve API defaults. Pagination is explicit; one
 list invocation reads one page only. `--deleted-only` and `--no-deleted-only` send true and false;
 using both is an error. Products also support `--free-text-search`.
+
+## Entries, accounts and document archive
+
+Use explicit periods for accounting questions; do not invent a default financial year.
+
+```sh
+dinero entries list --organization 123 --from-date 2026-01-01 --to-date 2026-09-20 --no-include-primo --json
+dinero accounts entry --organization 123 --fields AccountNumber,Name,VatCode,Category,IsHidden --json
+dinero files list --organization 123 --file-status Unused --page 0 --page-size 1000 --json
+```
+
+`entries changes` takes `--changes-from`/`--changes-to`. Entry dates accept ISO dates/times and
+are sent unchanged; `--include-primo` and `--no-include-primo` are mutually exclusive. No entries,
+account, accounting-year or VAT-type operation has pagination/query-filter options. Account
+views accept `--fields`; only `accounts entry` accepts `--category-filter`.
+Files support comma-separated `--extensions`, `--uploaded-before`/`--uploaded-after` in
+YYYY/MM/DD format, and `--file-status All|Used|Unused`. One page is not necessarily all files.
+Unused files are unlinked documents, not a verified count of expenses: duplicates and non-booking
+documents may be included. File commands return metadata only; binary downloads are not available.
 
 ## Writes and complex payloads
 

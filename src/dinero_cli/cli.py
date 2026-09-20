@@ -11,12 +11,17 @@ from typer.core import Abort, TyperGroup
 from typer.main import get_command
 
 from dinero_cli._version import VERSION
+from dinero_cli.commands.accounting_years import app as accounting_years_app
+from dinero_cli.commands.accounts import app as accounts_app
 from dinero_cli.commands.api import app as api_app
 from dinero_cli.commands.auth import app as auth_app
 from dinero_cli.commands.config import app as config_app
 from dinero_cli.commands.contacts import app as contacts_app
+from dinero_cli.commands.entries import app as entries_app
+from dinero_cli.commands.files import app as files_app
 from dinero_cli.commands.organizations import app as organizations_app
 from dinero_cli.commands.products import app as products_app
+from dinero_cli.commands.vat_types import app as vat_types_app
 from dinero_cli.config import saved_values
 from dinero_cli.errors import CLIError
 from dinero_cli.output import OutputClosed, PipeWriter, emit_error, silence_closed_pipe
@@ -117,6 +122,11 @@ app.add_typer(api_app, name="api")
 app.add_typer(organizations_app, name="organizations")
 app.add_typer(contacts_app, name="contacts")
 app.add_typer(products_app, name="products")
+app.add_typer(entries_app, name="entries")
+app.add_typer(accounts_app, name="accounts")
+app.add_typer(files_app, name="files")
+app.add_typer(accounting_years_app, name="accounting-years")
+app.add_typer(vat_types_app, name="vat-types")
 
 
 @app.callback(invoke_without_command=True)
