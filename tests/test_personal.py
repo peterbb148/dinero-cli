@@ -48,7 +48,9 @@ def personal(tmp_path):
     ), requests
 
 
-def test_grant_exact_wire_and_renewal(personal):
+@pytest.mark.parametrize("refresh_token", [None, "", "unused-provider-refresh-token"])
+def test_grant_exact_wire_and_renewal(personal, monkeypatch, refresh_token):
+    monkeypatch.setitem(RESPONSE, "refresh_token", refresh_token)
     service, requests = personal
     with service.store.transaction() as txn:
         txn.state.client_secret = SecretStr("existing-visma-secret")

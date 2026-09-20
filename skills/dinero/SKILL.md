@@ -53,6 +53,7 @@ Only one authorization is active. Successful login switches method; a failed log
 previous state. Personal status includes `method` and `organization`; `refresh_available`
 means the stored API key can renew the token, not that an OAuth refresh token exists.
 Personal tokens renew automatically with a fresh API-key grant under a process lock.
+The provider's `refresh_token` field is ignored for personal login, including empty values.
 
 Credentials must not appear in arguments, shell history, chat, JSON output or logs.
 Supply an existing private client-secret file using

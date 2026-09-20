@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError
 
 from dinero_cli.config import Settings, require_trusted_origin
 from dinero_cli.errors import CLIError
-from dinero_cli.personal import PersonalCredentials
+from dinero_cli.personal import PersonalCredentials, PersonalGrant
 from dinero_cli.personal import exchange as personal_exchange
 from dinero_cli.secrets import SecretStore, Transaction
 
@@ -303,7 +303,7 @@ class AuthService:
         """Validate a personal grant without accepting OAuth refresh credentials."""
         raw, status = personal_exchange(personal, self.transport)
         try:
-            grant = Grant.model_validate_json(raw)
+            grant = PersonalGrant.model_validate_json(raw)
             token = grant.access_token.get_secret_value()
             if (
                 grant.token_type.lower() != "bearer"
