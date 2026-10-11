@@ -23,6 +23,8 @@ def files_context(base, body=False):
             Path("similar.json").unlink(missing_ok=True)
 
 
+FILE_ID = "fixturefileid1234567890abcdefghij"
+
 base = contract("organizations", "list")
 failures = tuple(case for case in base.cases if case.exit_code)
 found = {"SimilarFound": True, "SimilarGuid": GUID, "VoucherNumber": 17}
@@ -34,10 +36,10 @@ CONTRACTS = {
         options=frozenset(BASE),
         reason="Read all draft GUIDs linked to an explicit file without selecting one.",
         cases=tuple(
-            Case((GUID,), expected=value, human=human, setup=partial(setup, value=value))
+            Case((FILE_ID,), expected=value, human=human, setup=partial(setup, value=value))
             for value, human in (([], ("No results",)), ([GUID], (GUID,)), ([GUID, GUID], (GUID,)))
         )
-        + tuple(replace(case, args=(GUID, *case.args)) for case in failures),
+        + tuple(replace(case, args=(FILE_ID, *case.args)) for case in failures),
     ),
     ("purchase-vouchers", "similar"): replace(
         base,
@@ -84,7 +86,7 @@ CONTRACTS = {
         cases=tuple(
             replace(
                 case,
-                args=(GUID, "--output", "receipt.bin", *case.args),
+                args=(FILE_ID, "--output", "receipt.bin", *case.args),
                 setup=partial(files_context, case.setup),
             )
             for case in (

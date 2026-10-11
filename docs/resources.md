@@ -74,12 +74,17 @@ does not prove that a separate expense remains to be booked. No read command mut
 Use a FileGuid from `files list` to inspect an expense. These commands work in Bash and PowerShell:
 
 ```sh
-dinero files download FILE_GUID --organization 123 --output receipt.pdf --json
-dinero purchase-vouchers get-by-file FILE_GUID --organization 123 --json
+dinero files download FILE_ID --organization 123 --output receipt.pdf --json
+dinero purchase-vouchers get-by-file FILE_ID --organization 123 --json
 dinero purchase-vouchers similar --organization 123 --input purchase.json --json
 ```
 
-Replace FILE_GUID with the actual GUID. `files download` requires a new destination file in an
+Replace FILE_ID with the exact opaque string returned by `files list`; it need not be a UUID.
+File-ID path arguments preserve case and encode accepted values as one URL segment. Empty IDs,
+whitespace, controls, path/query delimiters, percent escapes, braces and dot segments are rejected
+locally. Voucher and contact GUID arguments still require UUIDs.
+
+`files download` requires a new destination file in an
 existing directory. It streams the original bytes, with no PDF-only restriction or automatic
 filename from the server. Choose the extension using the listed metadata. `--output -` is rejected;
 stdout contains only local metadata such as `{"path":"receipt.pdf","bytes":12345}`, or a human

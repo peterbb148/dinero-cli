@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 GUID = "cdb485f3-a188-48b1-8d40-f6c8014c9f21"
+FILE_ID = "fixturefileid1234567890abcdefghij"
 STAMP = "opaque / + = timestamp"
 DOCUMENT = b"%PDF-1.7\nfixture\x00\xff\n"
 LOOKUP_VARIANTS = {
@@ -28,11 +29,11 @@ def resource_cases() -> list[Case]:
     cases: list[Case] = [(["organizations", "list"], "GET", "/v1/organizations", None)]
     cases.extend(
         [
-            (["files", "download", GUID], "GET", f"/v1/456/files/{GUID}", None),
+            (["files", "download", FILE_ID], "GET", f"/v1/456/files/{FILE_ID}", None),
             (
-                ["purchase-vouchers", "get-by-file", GUID],
+                ["purchase-vouchers", "get-by-file", FILE_ID],
                 "GET",
-                f"/v1/456/vouchers/purchase/fileguid/{GUID}",
+                f"/v1/456/vouchers/purchase/fileguid/{FILE_ID}",
                 None,
             ),
             (
@@ -208,7 +209,9 @@ def verify_resources(
     destination = Path(directory) / "native-receipt.bin"
     count = len(requests)
     error = invoke(
-        ["files", "download", GUID, "--organization", "456", "--output", str(destination)], 2, None
+        ["files", "download", FILE_ID, "--organization", "456", "--output", str(destination)],
+        2,
+        None,
     )
     if (
         len(requests) != count
