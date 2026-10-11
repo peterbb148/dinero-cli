@@ -41,7 +41,10 @@ def file_id_path(value: str) -> str:
         raise CLIError(
             "File ID must be a non-empty URL path segment without delimiters or controls."
         )
-    return quote(value, safe="")
+    try:
+        return quote(value, safe="")
+    except UnicodeEncodeError as error:
+        raise CLIError("File ID must be valid UTF-8 text.") from error
 
 
 def boolean(yes: bool, no: bool, field: str) -> bool | None:

@@ -399,6 +399,8 @@ def test_dangling_destination_link_is_refused(tmp_path, monkeypatch):
         "a\x7f",
         "a\x80",
         "a\x9f",
+        "a\ud800",
+        "a\udcff",
     ],
 )
 def test_invalid_file_id_never_sends(wire, tmp_path, command, file_id):
