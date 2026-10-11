@@ -306,6 +306,7 @@ def test_publication_io_failure_cleans_up(tmp_path, monkeypatch, operation):
             download.write(b"data")
             download.publish()
     assert failure.value.code == 5
+    assert ("finalize" if operation == "fsync" else "publish") in failure.value.message
     assert not list(tmp_path.iterdir())
 
 

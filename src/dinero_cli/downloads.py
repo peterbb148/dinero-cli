@@ -75,6 +75,9 @@ class DownloadFile:
             self.stream.flush()
             os.fsync(self.stream.fileno())
             self.stream.close()
+        except OSError as error:
+            raise CLIError("Unable to finalize the download file.", code=5) from error
+        try:
             # A hard link publishes a complete sibling file and atomically refuses an
             # existing target. Filesystems without hard links fail; never copy/overwrite.
             os.link(self.temporary, self.output)
@@ -82,7 +85,8 @@ class DownloadFile:
             raise CLIError("Download destination already exists; choose a new file.") from error
         except OSError as error:
             raise CLIError(
-                "Unable to publish download; destination must support hard links.", code=5
+                "Unable to publish download; check directory permissions and hard-link support.",
+                code=5,
             ) from error
         return {"path": str(self.output), "bytes": self.size}
 
