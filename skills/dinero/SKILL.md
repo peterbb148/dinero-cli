@@ -123,9 +123,13 @@ documents may be included. `files list` returns metadata; use `files download` f
 
 ### Inspect an expense document
 
+File IDs are opaque strings, not UUIDs. Copy them unchanged from `files list`; do not convert
+them to voucher GUIDs. File-ID path arguments reject empty values, whitespace, controls,
+path/query delimiters, percent escapes, braces and dot segments.
+
 ```sh
-dinero files download FILE_GUID --organization 123 --output receipt.pdf --json
-dinero purchase-vouchers get-by-file FILE_GUID --organization 123 --json
+dinero files download FILE_ID --organization 123 --output receipt.pdf --json
+dinero purchase-vouchers get-by-file FILE_ID --organization 123 --json
 dinero purchase-vouchers similar --organization 123 --input purchase.json --json
 ```
 

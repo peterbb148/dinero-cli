@@ -3,6 +3,7 @@
 import asyncio
 from pathlib import Path
 from typing import Annotated, Any
+from urllib.parse import quote
 from uuid import UUID
 
 import typer
@@ -19,6 +20,7 @@ Input = Annotated[
 ]
 Organization = Annotated[str | None, typer.Option(help="Override the selected organization.")]
 Guid = Annotated[UUID, typer.Argument(help="Resource GUID from a previous read.")]
+FileId = Annotated[str, typer.Argument(help="Opaque file ID from files list; not a UUID.")]
 Fields = Annotated[str | None, typer.Option(help="Comma-separated API response field names.")]
 Page = Annotated[
     int | None, typer.Option(min=0, help="Zero-based page; only this page is fetched.")
@@ -26,6 +28,23 @@ Page = Annotated[
 PageSize = Annotated[int | None, typer.Option(min=1, max=1000, help="Items per page (1–1000).")]
 QueryFilter = Annotated[str | None, typer.Option(help="Dinero queryFilter expression, unchanged.")]
 ChangesSince = Annotated[str | None, typer.Option(help="Dinero changesSince date/time, unchanged.")]
+
+
+def file_id_path(value: str) -> str:
+    """Encode an opaque file ID as one segment without changing request routing."""
+    if (
+        not value
+        or value in {".", ".."}
+        or any(char in value for char in "/\\%?#{}")
+        or any(char.isspace() or ord(char) < 32 or 127 <= ord(char) <= 159 for char in value)
+    ):
+        raise CLIError(
+            "File ID must be a non-empty URL path segment without delimiters or controls."
+        )
+    try:
+        return quote(value, safe="")
+    except UnicodeEncodeError as error:
+        raise CLIError("File ID must be valid UTF-8 text.") from error
 
 
 def boolean(yes: bool, no: bool, field: str) -> bool | None:

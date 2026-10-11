@@ -6,10 +6,12 @@ import typer
 
 from dinero_cli.commands.config import Json
 from dinero_cli.commands.resources import (
+    FileId,
     Guid,
     Input,
     Organization,
     execute,
+    file_id_path,
     payload,
 )
 from dinero_cli.voucher_models import (
@@ -29,7 +31,7 @@ Timestamp = Annotated[
 
 @app.command("get-by-file")
 def get_by_file(
-    file_guid: Guid,
+    file_guid: FileId,
     organization: Organization = None,
     json_output: Json = False,
 ) -> None:
@@ -39,7 +41,7 @@ def get_by_file(
     """
     execute(
         "GET",
-        f"/v1/{{organizationId}}/vouchers/purchase/fileguid/{file_guid}",
+        f"/v1/{{organizationId}}/vouchers/purchase/fileguid/{file_id_path(file_guid)}",
         organization,
         json_output,
     )

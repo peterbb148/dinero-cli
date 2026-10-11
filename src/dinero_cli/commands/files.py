@@ -9,7 +9,14 @@ import typer
 
 from dinero_cli.commands import resources
 from dinero_cli.commands.config import Json
-from dinero_cli.commands.resources import Guid, Organization, Page, PageSize, execute
+from dinero_cli.commands.resources import (
+    FileId,
+    Organization,
+    Page,
+    PageSize,
+    execute,
+    file_id_path,
+)
 from dinero_cli.errors import CLIError
 
 app = typer.Typer(no_args_is_help=True, help="Read metadata and download document archive files.")
@@ -17,7 +24,7 @@ app = typer.Typer(no_args_is_help=True, help="Read metadata and download documen
 
 @app.command()
 def download(
-    file_guid: Guid,
+    file_guid: FileId,
     output: Annotated[
         Path, typer.Option("--output", help="New destination file; never overwritten.")
     ],
@@ -31,7 +38,7 @@ def download(
     JSON returns local metadata: path (supplied destination) and bytes (saved byte count).
     """
     resources.download(
-        f"/v1/{{organizationId}}/files/{file_guid}", output, organization, json_output
+        f"/v1/{{organizationId}}/files/{file_id_path(file_guid)}", output, organization, json_output
     )
 
 

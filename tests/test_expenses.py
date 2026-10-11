@@ -18,6 +18,7 @@ from dinero_cli.downloads import DownloadFile
 from dinero_cli.errors import CLIError
 
 GUID = "cdb485f3-a188-48b1-8d40-f6c8014c9f21"
+FILE_ID = "fixturefileid1234567890abcdefghij"
 OTHER = "ddb485f3-a188-48b1-8d40-f6c8014c9f21"
 SECRET = "expense-token / +"
 
@@ -66,18 +67,22 @@ def wire(monkeypatch, tmp_path):
     return CliRunner(), calls, install
 
 
+@pytest.mark.parametrize("file_id", [FILE_ID, GUID, GUID.upper(), "opaque+\u00c6=ID"])
 @pytest.mark.parametrize("value", [[], [GUID], [GUID, OTHER]])
-def test_get_by_file_keeps_every_guid(wire, value):
+def test_get_by_file_keeps_every_guid(wire, value, file_id):
     runner, calls, install = wire
     install(httpx.Response(200, json=value))
     result = runner.invoke(
-        app, ["purchase-vouchers", "get-by-file", GUID, "--organization", "456", "--json"]
+        app, ["purchase-vouchers", "get-by-file", file_id, "--organization", "456", "--json"]
     )
     assert result.exit_code == 0, result.stderr
     assert json.loads(result.stdout) == value
     assert len(calls) == 1
     assert calls[0].method == "GET"
-    assert calls[0].url.path == f"/v1/456/vouchers/purchase/fileguid/{GUID}"
+    assert (
+        calls[0].url.raw_path
+        == f"/v1/456/vouchers/purchase/fileguid/{quote(file_id, safe='')}".encode()
+    )
     assert calls[0].content == b""
 
 
@@ -146,7 +151,8 @@ def test_similar_invalid_payload_never_sends(wire, source):
 @pytest.mark.parametrize(
     "data", [b"", b"%PDF-1.7\x00\xff\n", bytes(range(256)) * 4096], ids=["empty", "pdf", "large"]
 )
-def test_download_streams_original_bytes(wire, tmp_path, data):
+@pytest.mark.parametrize("file_id", [FILE_ID, GUID, GUID.upper(), "opaque+\u00c6=ID"])
+def test_download_streams_original_bytes(wire, tmp_path, data, file_id):
     runner, calls, install = wire
     target = tmp_path / "bilag Æ.bin"
 
@@ -167,13 +173,14 @@ def test_download_streams_original_bytes(wire, tmp_path, data):
         )
     )
     result = runner.invoke(
-        app, ["files", "download", GUID, "--output", str(target), "--organization", "456", "--json"]
+        app,
+        ["files", "download", file_id, "--output", str(target), "--organization", "456", "--json"],
     )
     assert result.exit_code == 0, result.stderr
     assert json.loads(result.stdout) == {"path": str(target), "bytes": len(data)}
     assert target.read_bytes() == data and stream.closed
     assert len(calls) == 1
-    assert calls[0].url.path == f"/v1/456/files/{GUID}"
+    assert calls[0].url.raw_path == f"/v1/456/files/{quote(file_id, safe='')}".encode()
     assert calls[0].headers["Authorization"] == "Bearer expense-token"
     assert calls[0].headers["Accept"] == "*/*"
     assert not list(tmp_path.glob(".dinero-download-*"))
@@ -370,3 +377,50 @@ def test_dangling_destination_link_is_refused(tmp_path, monkeypatch):
         with DownloadFile(target):
             pytest.fail("must not enter")
     assert not list(tmp_path.iterdir())
+
+
+@pytest.mark.parametrize("command", [("files", "download"), ("purchase-vouchers", "get-by-file")])
+@pytest.mark.parametrize(
+    "file_id",
+    [
+        "",
+        ".",
+        "..",
+        "a/b",
+        "a\\b",
+        "a?b",
+        "a#b",
+        "%2f",
+        "%252f",
+        "{organizationId}",
+        "a b",
+        "a\n",
+        "a\x00",
+        "a\x7f",
+        "a\x80",
+        "a\x9f",
+        "a\ud800",
+        "a\udcff",
+    ],
+)
+def test_invalid_file_id_never_sends(wire, tmp_path, command, file_id):
+    runner, calls, install = wire
+    install(httpx.Response(200))
+    target = tmp_path / "invalid.bin"
+    args = [*command, file_id, "--organization", "456", "--json"]
+    if command[0] == "files":
+        args += ["--output", str(target)]
+    result = runner.invoke(app, args)
+    assert result.exit_code == 2
+    assert not result.stdout and not calls and not target.exists()
+    assert json.loads(result.stderr)["error"] is True
+
+
+def test_voucher_id_still_requires_uuid(wire):
+    runner, calls, install = wire
+    install(httpx.Response(200))
+    result = runner.invoke(
+        app, ["purchase-vouchers", "get", FILE_ID, "--organization", "456", "--json"]
+    )
+    assert result.exit_code == 2
+    assert not calls and not result.stdout
