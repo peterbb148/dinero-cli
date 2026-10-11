@@ -2,6 +2,7 @@
 
 import os
 import stat
+import sys
 import tempfile
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -20,7 +21,9 @@ def check_private(path: Path, *, directory: bool = False) -> None:
     expected = stat.S_ISDIR if directory else stat.S_ISREG
     if not expected(info.st_mode):
         raise CLIError("State path has an unsupported file type.")
-    if os.name != "nt" and (info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) & 0o077):
+    if sys.platform != "win32" and (
+        info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) & 0o077
+    ):
         raise CLIError("State permissions must be private: directory 0700, files 0600.")
 
 
@@ -63,7 +66,7 @@ def atomic_write(path: Path, content: bytes) -> None:
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
-        if os.name != "nt":
+        if sys.platform != "win32":
             directory_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
             try:
                 os.fsync(directory_fd)

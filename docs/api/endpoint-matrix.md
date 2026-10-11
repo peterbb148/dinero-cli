@@ -6,6 +6,9 @@ source SHA-256, exact query names/types/defaults, path arguments and request fie
 All dedicated commands in this matrix are implemented. Versions and resource differences below
 remain part of the command contract.
 
+The three expense operations added in contract 1.1 were rechecked on 2026-10-11; their
+source checksum is recorded separately as `expense_operations_verification` in the JSON.
+
 `{organizationId}` is resolved from `--organization` or configuration, never an implicit account.
 `{guid}` is a positional resource GUID. All other path parameters remain positional.
 
@@ -42,6 +45,9 @@ remain part of the command contract.
 | `accounting-years list` | GET | `/v1/{organizationId}/accountingyears` | None |
 | `vat-types list` | GET | `/v1/{organizationId}/vatTypes` | None |
 | `files list` | GET | `/v1/{organizationId}/files` | None |
+| `files download` | GET | `/v1/{organizationId}/files/{fileGuid}` | None; binary response |
+| `purchase-vouchers get-by-file` | GET | `/v1/{organizationId}/vouchers/purchase/fileguid/{fileGuid}` | None; UUID array response |
+| `purchase-vouchers similar` | POST | `/v1/{organizationId}/vouchers/purchase/similar` | PurchaseVoucherCreateModelV2 |
 
 ## Resource differences
 
@@ -72,12 +78,15 @@ and voucher `--timestamp` → `Timestamp`. The payload combination rule is in th
 
 ## Deliberate escape-hatch scope
 
-Notes, file upload/download, PDF exports, payments, reminders, EAN, credit notes, restore, totals/fetch,
-similarity and other auxiliary endpoints do not gain dedicated commands in the first matrix.
+Notes, file upload, invoice PDF exports, payments, reminders, EAN, credit notes, restore, totals/fetch
+and other auxiliary endpoints do not gain dedicated commands in this matrix.
 Agents must add dedicated commands before using any remaining operation. The manual escape
 hatch supports only JSON requests and responses. Its initial JSON-only
-transport does not promise multipart upload or binary/PDF download; those fail clearly and require
-a later explicit transport extension. Never reconstruct bearer-token HTTP calls in an agent skill.
+transport does not support multipart upload or binary/PDF download. Original archive files use
+the dedicated `files download` binary extension; its success media type is unspecified in OpenAPI,
+so no PDF-only restriction is imposed. `get-by-file` preserves the array of GUIDs; `similar` returns
+SimilarPurchaseVoucherReadModel and does not promise AI accounting suggestions. Neither command
+automatically selects, creates or books a draft. Never reconstruct bearer-token HTTP in an agent skill.
 
 Discovery of future endpoints uses the official OpenAPI, not guessed resource symmetry.
 When changing this matrix, re-fetch the source, review the diff and update verification date/hash.

@@ -27,6 +27,47 @@ Timestamp = Annotated[
 ]
 
 
+@app.command("get-by-file")
+def get_by_file(
+    file_guid: Guid,
+    organization: Organization = None,
+    json_output: Json = False,
+) -> None:
+    """Find purchase draft GUIDs linked to a file; preserve zero, one or multiple results.
+
+    No automatic draft selection, creation or additional read.
+    """
+    execute(
+        "GET",
+        f"/v1/{{organizationId}}/vouchers/purchase/fileguid/{file_guid}",
+        organization,
+        json_output,
+    )
+
+
+@app.command()
+def similar(
+    input_file: Annotated[
+        str, typer.Option("--input", help="UTF-8 JSON object file, or - for stdin.")
+    ],
+    organization: Organization = None,
+    json_output: Json = False,
+) -> None:
+    """Find similar purchases using supplied data. Does not create or book a voucher.
+
+    Required JSON field: PurchaseType. Accepts PurchaseVoucherCreateModelV2.
+    Returns Dinero's response unchanged; not a promise of AI accounting suggestions.
+    """
+    body = payload(input_file, {}, PurchaseVoucherCreateModelV2)
+    execute(
+        "POST",
+        "/v1/{organizationId}/vouchers/purchase/similar",
+        organization,
+        json_output,
+        body=body,
+    )
+
+
 @app.command()
 def create(
     contact_guid: Annotated[

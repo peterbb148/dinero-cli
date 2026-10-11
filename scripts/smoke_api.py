@@ -16,7 +16,14 @@ from dinero_cli.auth import TokenRecord
 from dinero_cli.config import Settings
 from dinero_cli.secrets import SecretStore
 from dinero_cli.storage import atomic_write
-from scripts.smoke_resources import verify_resources
+from scripts.smoke_resources import (
+    DOCUMENT,
+    DOWNLOAD_FAILURES,
+    GUID,
+    LOOKUP_VARIANTS,
+    NO_SIMILAR,
+    verify_resources,
+)
 
 TOKEN = "native-smoke-access-token"
 PAYLOAD = {"ContactGuid": "fixture", "Lines": [{"Description": "Æble", "Amount": 12.5}]}
@@ -72,6 +79,24 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
         def respond(self) -> None:
             body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
             requests.append((self.command, self.path, body, self.headers.get("Authorization")))
+            file_guid = self.path.rsplit("/", 1)[-1]
+            is_download = self.path.startswith("/v1/456/files/")
+            if is_download and file_guid in DOWNLOAD_FAILURES:
+                _, download_status = DOWNLOAD_FAILURES[file_guid]
+                if download_status is None:
+                    self.send_response(200)
+                    self.send_header("Content-Length", "1000")
+                    self.end_headers()
+                    self.wfile.write(b"incomplete")
+                    self.close_connection = True
+                    return
+                self.send_response(download_status)
+                raw = json.dumps({"Message": "Rejected " + TOKEN}).encode()
+                self.send_header("Content-Length", str(len(raw)))
+                self.send_header("Retry-After", "17")
+                self.end_headers()
+                self.wfile.write(raw)
+                return
             failure = json.loads(body).get("__smoke_failure") if body else None
             if failure == "disconnect":
                 self.close_connection = True
@@ -97,14 +122,27 @@ def smoke_api(executable: Path, environment: dict[str, str], directory: str) -> 
                 else PAYLOAD
             )
             raw = (
-                b"not JSON"
+                DOCUMENT
+                if is_download
+                else json.dumps(LOOKUP_VARIANTS.get(file_guid, [GUID])).encode()
+                if "/vouchers/purchase/fileguid/" in self.path
+                else json.dumps(NO_SIMILAR).encode()
+                if self.path.endswith("/vouchers/purchase/similar")
+                and json.loads(body).get("__smoke_no_similar")
+                else json.dumps(
+                    {"SimilarFound": True, "SimilarGuid": GUID, "VoucherNumber": 17}
+                ).encode()
+                if self.path.endswith("/vouchers/purchase/similar")
+                else b"not JSON"
                 if self.path.endswith("/binary")
                 else b""
                 if status == 204
                 else json.dumps(value).encode()
             )
             self.send_response(status)
-            self.send_header("Content-Type", "application/json")
+            self.send_header(
+                "Content-Type", "application/octet-stream" if is_download else "application/json"
+            )
             self.send_header("Content-Length", str(len(raw)))
             if status == 429:
                 self.send_header("Retry-After", "17")

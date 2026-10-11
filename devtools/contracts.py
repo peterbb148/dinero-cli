@@ -122,7 +122,10 @@ def check(
                             env=env,
                             color=force_color,
                         )
-                    assert result.exit_code == case.exit_code, "ERR-001: unexpected exit code"
+                    assert result.exit_code == case.exit_code, (
+                        f"ERR-001: unexpected exit code for {' '.join(path)} "
+                        f"({case.failure or 'success'}): {result.exit_code} != {case.exit_code}"
+                    )
                     for secret in secrets:
                         assert secret not in result.stdout + result.stderr, "SEC-001: secret leaked"
                     if case.exit_code:

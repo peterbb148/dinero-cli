@@ -3,7 +3,7 @@
   "source": "https://api.dinero.dk/openapi/v1/swagger.json",
   "source_sha256": "a128a6a686eb2499db0cb418d6507b313fde42457a0cb3bd741d2afac70622da",
   "api_origin": "https://api.dinero.dk",
-  "contract_version": "1.0",
+  "contract_version": "1.1",
   "operations": [
     {
       "command": "organizations list",
@@ -698,6 +698,40 @@
         }
       ],
       "request_schema": null
+    },
+    {
+      "path_arguments": [
+        "fileGuid"
+      ],
+      "query": [],
+      "method": "GET",
+      "request_schema": null,
+      "command": "files download",
+      "organization": true,
+      "path": "/v1/{organizationId}/files/{fileGuid}",
+      "response": "binary file; local JSON metadata: path, bytes"
+    },
+    {
+      "path_arguments": [
+        "fileGuid"
+      ],
+      "query": [],
+      "method": "GET",
+      "request_schema": null,
+      "command": "purchase-vouchers get-by-file",
+      "organization": true,
+      "path": "/v1/{organizationId}/vouchers/purchase/fileguid/{fileGuid}",
+      "response": "array of UUID strings"
+    },
+    {
+      "path_arguments": [],
+      "query": [],
+      "method": "POST",
+      "request_schema": "PurchaseVoucherCreateModelV2",
+      "command": "purchase-vouchers similar",
+      "organization": true,
+      "path": "/v1/{organizationId}/vouchers/purchase/similar",
+      "response": "SimilarPurchaseVoucherReadModel"
     }
   ],
   "request_summaries": {
@@ -929,5 +963,14 @@
         "ExternalReference"
       ]
     }
+  },
+  "expense_operations_verification": {
+    "source_sha256": "0e780af984cc1f6ec7313a4b5e8111a83ae85444a918fec81a9c2dd6ea4baf3b",
+    "commands": [
+      "files download",
+      "purchase-vouchers get-by-file",
+      "purchase-vouchers similar"
+    ],
+    "verified_at": "2026-10-11"
   }
 }

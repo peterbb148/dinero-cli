@@ -1,16 +1,38 @@
-"""List document archive metadata; no binary download or upload is implied."""
+"""List document archive metadata and explicitly download original files."""
 
 from datetime import datetime
 from enum import StrEnum
+from pathlib import Path
 from typing import Annotated
 
 import typer
 
+from dinero_cli.commands import resources
 from dinero_cli.commands.config import Json
-from dinero_cli.commands.resources import Organization, Page, PageSize, execute
+from dinero_cli.commands.resources import Guid, Organization, Page, PageSize, execute
 from dinero_cli.errors import CLIError
 
-app = typer.Typer(no_args_is_help=True, help="Read metadata for files in the document archive.")
+app = typer.Typer(no_args_is_help=True, help="Read metadata and download document archive files.")
+
+
+@app.command()
+def download(
+    file_guid: Guid,
+    output: Annotated[
+        Path, typer.Option("--output", help="New destination file; never overwritten.")
+    ],
+    organization: Organization = None,
+    json_output: Json = False,
+) -> None:
+    """Download original bytes to --output. Does not change accounting state.
+
+    Requires an existing parent directory and a filesystem supporting hard links.
+    No binary stdout, automatic filename, overwrite, retry or redirect.
+    JSON returns local metadata: path (supplied destination) and bytes (saved byte count).
+    """
+    resources.download(
+        f"/v1/{{organizationId}}/files/{file_guid}", output, organization, json_output
+    )
 
 
 class FileStatus(StrEnum):
