@@ -4,7 +4,7 @@ A Python/Typer CLI distributed as standalone Windows and Linux executables.
 It implements configuration, protected credential storage, Visma and personal API-key authorization,
 dedicated organizations/contacts/products commands, the manual JSON API escape hatch and CD.
 Entries, account views, accounting years, VAT types and document metadata also have dedicated
-read commands. Invoices support list/get/create/update/delete/book/send; purchase vouchers support
+read commands. Files support original-document download; purchase vouchers also support draft lookup by file and similar-purchase lookup. Invoices support list/get/create/update/delete/book/send; purchase vouchers support
 get/create/update/delete/book. Creating a draft, booking it and emailing an invoice are separate operations.
 Start with [configuration](docs/configuration.md) and [authentication](docs/authentication.md).
 Use [dedicated resource commands](docs/resources.md) for accounting workflows. The
@@ -120,7 +120,7 @@ For each new command:
 
 The checker exercises redirected human/JSON output with normal and forced-colour settings.
 Its adversarial tests prove that missing `--json`, noise/ANSI, wrong streams/status,
-changed payloads and unregistered commands fail. Today the CLI has **43 data commands**, including resource reads and mutations;
+changed payloads and unregistered commands fail. Today the CLI has **46 data commands**, including resource reads and mutations;
 help/version and Typer completion remain control surfaces. Completion callbacks run with shell
 lookup/installation mocked. These tests do not prove visual quality, every possible secret
 path, API fidelity or safe bookkeeping. The constitution maps those remaining obligations
@@ -199,5 +199,5 @@ dinero invoices --help
 These reads do not save a default organization. List calls return one page only. Use `--json`
 for scripts; human tables are for terminals. Errors go to stderr with a nonzero exit status.
 All writes require explicit scope and current resource information; draft creation never books
-or sends. File upload/binary download, MCP login and automatic accounting suggestions are not
+or sends. File upload, MCP login and automatic accounting suggestions are not
 implemented. No official PyPI package or 32-bit/macOS binary is supplied.

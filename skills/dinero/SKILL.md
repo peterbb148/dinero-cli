@@ -24,9 +24,9 @@ The current CLI has:
 - `entries list|changes`: accounting entries and changes with explicit date filters.
 - `accounts entry|purchase|deposit`: account views with endpoint-specific filters.
 - `accounting-years list` and `vat-types list`: accounting lookup data.
-- `files list`: one page of document archive metadata.
+- `files list/download`: one page of document metadata or original bytes to a new local file.
 - `invoices list|get|create|update|delete|book|send`: explicit invoice operations.
-- `purchase-vouchers get|create|update|delete|book`: explicit purchase voucher operations.
+- `purchase-vouchers get|get-by-file|similar|create|update|delete|book`: purchase reads and explicit mutations.
 
 Agents must use dedicated resource commands. Do not use `dinero api`, curl, handwritten HTTP
 or Python imports to access accounting data. If the needed operation has no dedicated command,
@@ -119,7 +119,40 @@ views accept `--fields`; only `accounts entry` accepts `--category-filter`.
 Files support comma-separated `--extensions`, `--uploaded-before`/`--uploaded-after` in
 YYYY/MM/DD format, and `--file-status All|Used|Unused`. One page is not necessarily all files.
 Unused files are unlinked documents, not a verified count of expenses: duplicates and non-booking
-documents may be included. File commands return metadata only; binary downloads are not available.
+documents may be included. `files list` returns metadata; use `files download` for original bytes.
+
+### Inspect an expense document
+
+```sh
+dinero files download FILE_GUID --organization 123 --output receipt.pdf --json
+dinero purchase-vouchers get-by-file FILE_GUID --organization 123 --json
+dinero purchase-vouchers similar --organization 123 --input purchase.json --json
+```
+
+Use a real FileGuid from `files list`. Download requires an explicit new destination in an existing
+directory; no overwrite, server-selected filename, binary stdout or `--output -`. It preserves
+original bytes, not only PDFs; choose the extension from metadata. A successful JSON result is
+local metadata `{"path":"receipt.pdf","bytes":12345}` (platform-normalized supplied path and byte
+count), not Dinero JSON. Empty success saves a zero-byte file. Human mode shows path and byte count.
+Publication is atomic and requires a filesystem with hard links (NTFS/ext4); unsupported filesystems
+fail, with no copy fallback. Handled failures clean up temporary files; forced termination can leave
+a `.dinero-download-*` sibling. Existing targets fail with exit 2, local I/O with exit 5; HTTP errors
+use the shared codes below. Auth, organization binding, no redirects/retries and redaction still apply.
+
+`get-by-file` preserves the whole array of purchase draft GUIDs, including empty/multiple results.
+Select the matching draft explicitly and read it with `purchase-vouchers get`; no automatic first
+result or new draft after an empty/failed lookup. Download the original when the draft needs checking.
+
+`similar` requires `--input FILE|-` with a `PurchaseVoucherCreateModelV2` object and `PurchaseType`;
+for example `{"PurchaseType":"cash","Lines":[{"Amount":125,"Description":"Office supplies"}]}`.
+Use the receipt's actual values. Unknown fields survive; no accounting defaults are filled in.
+The single POST lookup returns the unchanged API result (`SimilarFound`, `SimilarGuid`,
+`VoucherNumber`). It does not create/book a voucher or promise the Assistant's AI suggestions.
+The shared conservative POST transport diagnostic still applies; never retry automatically.
+
+Use `accounts purchase` and `vat-types list` as needed before an authorized create/update/book.
+Those mutations remain separate and require the current Timestamp where applicable; downloading
+or inspecting receipts does not authorize booking or payment registration. The CLI does no OCR.
 
 ## Writes and complex payloads
 

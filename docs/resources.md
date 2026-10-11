@@ -63,11 +63,57 @@ Neither a period nor includePrimo is invented: omit it to preserve Dinero's defa
 `--include-primo`/`--no-include-primo`. Opposing flags fail. These entry/lookup endpoints have no
 pagination or generic query filter. Only entry accounts expose `--category-filter`.
 
-Files return archive metadata and links, not PDF/image bytes. Filters are `--extensions`
+`files list` returns archive metadata and links. Filters are `--extensions`
 (comma-separated), `--uploaded-before`/`--uploaded-after` (YYYY/MM/DD), and
 `--file-status All|Used|Unused`. File pagination is explicit and only one page is retrieved.
 An unused file can be a duplicate, invoice, receipt or unrelated attachment; its presence alone
 does not prove that a separate expense remains to be booked. No read command mutates records.
+
+## Original documents, linked drafts and similar purchases
+
+Use a FileGuid from `files list` to inspect an expense. These commands work in Bash and PowerShell:
+
+```sh
+dinero files download FILE_GUID --organization 123 --output receipt.pdf --json
+dinero purchase-vouchers get-by-file FILE_GUID --organization 123 --json
+dinero purchase-vouchers similar --organization 123 --input purchase.json --json
+```
+
+Replace FILE_GUID with the actual GUID. `files download` requires a new destination file in an
+existing directory. It streams the original bytes, with no PDF-only restriction or automatic
+filename from the server. Choose the extension using the listed metadata. `--output -` is rejected;
+stdout contains only local metadata such as `{"path":"receipt.pdf","bytes":12345}`, or a human
+table. The path is the supplied path as normalized by the platform, not a Dinero response field.
+Empty successful downloads produce a zero-byte file. No OCR or PDF parsing is performed.
+
+The download uses a private sibling temporary file and atomically publishes it with a hard link.
+Existing files, directories and symlinks are never overwritten, including a file created during
+the request. The destination filesystem must support hard links (for example NTFS or ext4);
+unsupported filesystems fail clearly without a copy fallback. Temporary files are removed on
+handled errors/interruption. Forced process termination or power loss can leave a temporary file.
+Bad/missing arguments or an existing destination use exit 2; local file I/O failures use exit 5.
+HTTP errors, credentials, organization binding, redirects and retries follow the shared client.
+
+`get-by-file` returns the entire API array of draft GUIDs: empty, one or several. Choose a matching
+draft explicitly, then use `purchase-vouchers get GUID` to inspect it. No result does not authorize
+creating a new draft. Download the original when needed to verify the draft's contents.
+
+`similar` takes `PurchaseVoucherCreateModelV2` through `--input FILE` or `--input -`, requiring
+`PurchaseType`. For example, a UTF-8 input file can contain:
+
+```json
+{"PurchaseType":"cash","Lines":[{"Amount":125,"Description":"Office supplies"}]}
+```
+
+Supply values from the actual receipt. Unknown fields and omitted optional fields are preserved.
+The command performs one POST lookup and returns Dinero's response unchanged, including
+`SimilarFound`, `SimilarGuid` and `VoucherNumber`. It does not create or book anything, and does
+not claim access to the Assistant's AI accounting suggestions. The shared conservative POST
+transport diagnostic and zero-retry policy still apply.
+
+Read `accounts purchase` and `vat-types list` when preparing an explicitly authorized draft.
+Use existing `purchase-vouchers create/update/book` separately, with current Timestamp where
+required. Finding or downloading a receipt never automatically books it or registers payment.
 
 ## Invoices and purchase vouchers
 

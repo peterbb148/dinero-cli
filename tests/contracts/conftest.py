@@ -6,6 +6,16 @@ import subprocess
 
 import pytest
 
+native_socketpair = socket.socketpair
+native_connect = socket.socket.connect
+
+
+def local_socketpair():
+    """Allow only the stdlib's private loopback pair needed by Windows asyncio."""
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(socket.socket, "connect", native_connect)
+        return native_socketpair()
+
 
 @pytest.fixture(autouse=True)
 def isolated_cli(tmp_path, monkeypatch):
@@ -26,3 +36,5 @@ def isolated_cli(tmp_path, monkeypatch):
     monkeypatch.setattr(socket.socket, "sendto", forbidden)
     monkeypatch.setattr(socket, "getaddrinfo", forbidden)
     monkeypatch.setattr(subprocess, "Popen", forbidden)
+    if os.name == "nt":
+        monkeypatch.setattr(socket, "socketpair", local_socketpair)

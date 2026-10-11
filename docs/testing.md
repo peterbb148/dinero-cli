@@ -51,6 +51,18 @@ native smoke tools themselves are build inputs, so the revised checks execute on
 and produce a release verified under that gate. Documentation-only
 changes run test/security/review gates but do not build or create a release.
 
+Expense coverage includes original-byte downloads (including empty/binary data), no-clobber
+publication even when a target appears during the request, credential echoes across stream chunks,
+file/transport errors and temporary-file cleanup. The native fixture checks exact download bytes,
+an existing destination, HTTP 403/429 and a truncated response; failures do not publish a file.
+Draft lookup preserves empty/one/multiple GUIDs in offline tests; similar-purchase tests preserve
+both found/not-found responses and unknown payload fields. Neither performs hidden accounting writes.
+
+On Windows, make Git's OpenSSL available on the build-host PATH, for example in PowerShell:
+`$env:Path = 'C:\Program Files\Git\usr\bin;' + $env:Path`.
+Contract isolation permits only the standard library's private socket pair needed by Windows
+asyncio; ordinary socket connections, DNS and subprocesses remain blocked.
+
 Reproduce a native build on a supported host (OpenSSL on the build-host PATH):
 
 ```sh

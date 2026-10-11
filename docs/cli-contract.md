@@ -1,4 +1,4 @@
-# CLI contract 1.0
+# CLI contract 1.1
 
 Status: implementation specification, ratified 2026-09-20 for issue #1. The executable implements configuration/auth and the dedicated accounting commands in the
 [resource guide](resources.md). The [constitution](../.specify/memory/constitution.md)
@@ -128,8 +128,14 @@ repeating it. Do not report a failed local token save as a successful login/refr
 
 The initial escape hatch supports JSON requests and JSON or empty responses only. Invalid
 JSON/non-JSON success fails clearly with exit 5; it is not wrapped as fake JSON success.
-Multipart/file upload, binary downloads and custom headers require an explicit future
-extension. API availability on day one does not imply every media type is supported.
+Multipart/file upload and custom headers require an explicit future extension.
+The dedicated `files download FILE_GUID --output PATH` command is the binary extension in 1.1;
+the manual escape hatch remains JSON-only. Download returns local `{path, bytes}` metadata on
+stdout, saves original bytes to a new file, refuses stdout destinations and existing targets,
+and atomically publishes a private sibling temporary file with no-clobber hard linking.
+The parent must exist and its filesystem must support hard links; no copy fallback is provided.
+Handled failures/interruption clean temporary files; forced termination can leave them behind.
+All shared authentication, organization, HTTP-error and no-retry rules still apply.
 
 ## Shared implementation boundaries
 

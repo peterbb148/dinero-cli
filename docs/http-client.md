@@ -27,7 +27,10 @@ Successful UTF-8 JSON retains its object/list/scalar shape. Empty successful bod
 including empty 201 or 204 responses. Duplicate keys, non-finite numbers, invalid UTF-8 and
 non-JSON successful responses fail with exit 5 rather than a fabricated JSON result. Request
 bodies must be JSON objects; unsupported values fail before reading credentials or sending data.
-Multipart upload, binary download and arbitrary headers are not implemented in this service.
+Multipart upload and arbitrary user headers are not implemented. `files download` explicitly
+uses the shared streaming response boundary with `Accept: */*`, saves bytes to a private temporary
+file and publishes without overwriting. JSON commands retain their strict JSON behavior. Download
+failures and active-credential echoes leave no destination file; no binary data goes to stdout.
 
 A response that echoes an active credential is refused with exit 5 instead of displaying it.
 Ordinary accounting data is otherwise returned unchanged. Error responses are sanitized for

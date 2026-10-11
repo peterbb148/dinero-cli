@@ -39,6 +39,8 @@ def configured(value=None, status=200, transport_error=False, authorized=True, m
                 raise httpx.ReadTimeout("contract-access-token")
             if value is None:
                 return httpx.Response(status)
+            if isinstance(value, bytes):
+                return httpx.Response(status, content=value)
             return httpx.Response(status, json=value)
 
         patch.setattr(

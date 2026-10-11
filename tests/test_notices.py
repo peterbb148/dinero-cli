@@ -199,7 +199,7 @@ def test_gcc_ownership_version_and_original_legal_files(monkeypatch):
     monkeypatch.setattr(Path, "read_bytes", lambda path: str(path).encode())
     version, texts = notices.gcc_runtime(source)
     assert version == "14.2.0" and len(texts) == 2
-    assert b"/usr/share/doc/libgcc-s1/copyright" == texts["COPYRIGHT.txt"]
+    assert str(Path("/usr/share/doc/libgcc-s1/copyright")).encode() == texts["COPYRIGHT.txt"]
     assert calls[1][-1] == "libgcc-s1:arm64"
     for bad in ("other-package: /wrong", f"other-package: {source}"):
         monkeypatch.setattr(notices.subprocess, "check_output", lambda *a, **kw: bad)

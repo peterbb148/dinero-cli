@@ -25,6 +25,16 @@ from dinero_cli.storage import atomic_write
         (b"\xff", "state mismatch"),
         (b"x" * (callback.LIMIT + 1), "state mismatch"),
     ],
+    ids=[
+        "wrong-state",
+        "duplicate-state",
+        "denied",
+        "missing-code",
+        "control",
+        "bad-utf8",
+        "non-utf8",
+        "oversized",
+    ],
 )
 def test_callback_rejects_untrusted_or_incomplete_fields(raw, message):
     with pytest.raises(CLIError, match=message) as failure:

@@ -3,14 +3,17 @@
 import asyncio
 import re
 import ssl
-from collections.abc import Sequence
+from collections.abc import AsyncIterator, Sequence
+from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 from urllib.parse import quote, unquote, urlencode
 
 import httpx
 
-from dinero_cli.auth import AuthService
+from dinero_cli.auth import AuthService, Credentials
 from dinero_cli.config import Settings, require_organization, require_trusted_origin
+from dinero_cli.downloads import DownloadFile
 from dinero_cli.errors import CLIError
 from dinero_cli.redaction import contains_known_secret, redact
 from dinero_cli.serialization import decode_json
@@ -80,15 +83,17 @@ class APIClient:
         self.auth = auth if auth is not None else AuthService(settings)
         self.transport = transport
 
-    async def request(
+    @asynccontextmanager
+    async def response(
         self,
         method: str,
         path: str,
         *,
         query: Sequence[tuple[str, str]] = (),
         body: dict[str, Any] | None = None,
-    ) -> Any:
-        """Send exactly one authenticated API operation; never replay an uncertain write."""
+        binary: bool = False,
+    ) -> AsyncIterator[tuple[httpx.Response, Credentials]]:
+        """Open one authenticated response with shared origin, status and transport handling."""
         origin = require_trusted_origin(self.settings)
         path = resource_path(path, self.settings)
         if method not in METHODS or (
@@ -140,8 +145,15 @@ class APIClient:
                             code=3,
                         )
                 request.headers["Authorization"] = "Bearer " + material.access_token
-                request.headers["Accept"] = "application/json"
-                response = await client.send(request)
+                request.headers["Accept"] = "*/*" if binary else "application/json"
+                response = await client.send(request, stream=True)
+                try:
+                    if not response.is_success:
+                        await response.aread()
+                        raise api_error(response, material.redactions)
+                    yield response, material
+                finally:
+                    await response.aclose()
         except httpx.HTTPError as error:
             message = "API transport failed."
             if method != "GET":
@@ -153,8 +165,18 @@ class APIClient:
             raise CLIError(
                 "Unable to initialize TLS or access local credentials.", code=5
             ) from error
-        if not response.is_success:
-            raise api_error(response, material.redactions)
+
+    async def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        query: Sequence[tuple[str, str]] = (),
+        body: dict[str, Any] | None = None,
+    ) -> Any:
+        """Read exactly one JSON operation; binary responses still fail explicitly."""
+        async with self.response(method, path, query=query, body=body) as (response, material):
+            await response.aread()
         if not response.content:
             return None
         try:
@@ -174,3 +196,18 @@ class APIClient:
                 status=response.status_code,
             )
         return value
+
+    async def download(self, path: str, output: Path) -> dict[str, Any]:
+        """Stream an original document to a new local file without replacing existing data."""
+        with DownloadFile(output) as target:
+            async with self.response("GET", path, binary=True) as (response, material):
+                if response.status_code == 206:
+                    raise CLIError(
+                        "API returned a partial document without a range request.",
+                        code=5,
+                        status=206,
+                    )
+                target.set_secrets(material.redactions)
+                async for chunk in response.aiter_bytes():
+                    target.write(chunk)
+            return target.publish()

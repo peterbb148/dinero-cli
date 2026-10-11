@@ -1,6 +1,7 @@
 """Shared execution and explicit payload construction for dedicated resource commands."""
 
 import asyncio
+from pathlib import Path
 from typing import Annotated, Any
 from uuid import UUID
 
@@ -67,4 +68,11 @@ def execute(
         if value is not None
     ]
     result = asyncio.run(APIClient(settings).request(method, path, query=pairs, body=body))
+    emit(result, json_mode=json_output or settings.output == "json")
+
+
+def download(path: str, output: Path, organization: str | None, json_output: bool) -> None:
+    """Download one file and render local path/byte-count metadata, never binary stdout."""
+    settings = load_settings(organization=organization)
+    result = asyncio.run(APIClient(settings).download(path, output))
     emit(result, json_mode=json_output or settings.output == "json")

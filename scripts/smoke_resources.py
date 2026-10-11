@@ -7,6 +7,17 @@ from typing import Any
 
 GUID = "cdb485f3-a188-48b1-8d40-f6c8014c9f21"
 STAMP = "opaque / + = timestamp"
+DOCUMENT = b"%PDF-1.7\nfixture\x00\xff\n"
+LOOKUP_VARIANTS = {
+    "00000000-0000-0000-0000-000000000011": [],
+    "00000000-0000-0000-0000-000000000012": [GUID, "00000000-0000-0000-0000-000000000013"],
+}
+NO_SIMILAR = {"SimilarFound": False, "SimilarGuid": None, "VoucherNumber": None}
+DOWNLOAD_FAILURES = {
+    "00000000-0000-0000-0000-000000000001": (4, 403),
+    "00000000-0000-0000-0000-000000000002": (6, 429),
+    "00000000-0000-0000-0000-000000000003": (5, None),
+}
 Case = tuple[list[str], str, str, dict[str, Any] | None]
 Request = tuple[str, str, bytes, str | None]
 Invoke = Callable[[list[str], int, str | None], Any]
@@ -15,6 +26,23 @@ Invoke = Callable[[list[str], int, str | None], Any]
 def resource_cases() -> list[Case]:
     """Describe each dedicated API operation independently of the command implementation."""
     cases: list[Case] = [(["organizations", "list"], "GET", "/v1/organizations", None)]
+    cases.extend(
+        [
+            (["files", "download", GUID], "GET", f"/v1/456/files/{GUID}", None),
+            (
+                ["purchase-vouchers", "get-by-file", GUID],
+                "GET",
+                f"/v1/456/vouchers/purchase/fileguid/{GUID}",
+                None,
+            ),
+            (
+                ["purchase-vouchers", "similar"],
+                "POST",
+                "/v1/456/vouchers/purchase/similar",
+                {"PurchaseType": "cash", "Lines": [{"Amount": 125, "Description": "Æble"}]},
+            ),
+        ]
+    )
     for group, endpoint in (
         ("entries", "entries"),
         ("accounting-years", "accountingyears"),
@@ -112,6 +140,10 @@ def verify_resources(
             args = arguments.copy()
             if args[0] != "organizations":
                 args += ["--organization", "456"]
+            destination = Path(directory) / "native-receipt.bin"
+            is_download = args[:2] == ["files", "download"]
+            if is_download:
+                args += ["--output", str(destination)]
             source = json.dumps(body, ensure_ascii=False) if body is not None else None
             if source is not None:
                 file = Path(directory) / "native-voucher.json"
@@ -119,7 +151,16 @@ def verify_resources(
                 args += ["--input", str(file) if use_file else "-"]
             count = len(requests)
             value = invoke(args, 0, None if use_file else source)
-            if value != (None if method == "DELETE" else response):
+            expected = None if method == "DELETE" else response
+            if is_download:
+                expected = {"path": str(destination), "bytes": len(DOCUMENT)}
+                if not destination.is_file() or destination.read_bytes() != DOCUMENT:
+                    raise ValueError("Native resource smoke failed: download bytes")
+            elif args[:2] == ["purchase-vouchers", "get-by-file"]:
+                expected = [GUID]
+            elif args[:2] == ["purchase-vouchers", "similar"]:
+                expected = {"SimilarFound": True, "SimilarGuid": GUID, "VoucherNumber": 17}
+            if value != expected:
                 raise ValueError("Native resource smoke failed: response fidelity")
             if len(requests) != count + 1:
                 raise ValueError("Native resource smoke failed: hidden request or retry")
@@ -128,6 +169,71 @@ def verify_resources(
                 raise ValueError("Native resource smoke failed: method, path or authorization")
             if (json.loads(raw) if raw else None) != body:
                 raise ValueError("Native resource smoke failed: payload fidelity")
+    # Empty and ambiguous lookup results must survive the packaged CLI unchanged.
+    for guid, expected_guids in LOOKUP_VARIANTS.items():
+        count = len(requests)
+        value = invoke(["purchase-vouchers", "get-by-file", guid, "--organization", "456"], 0, None)
+        if (
+            value != expected_guids
+            or len(requests) != count + 1
+            or requests[-1]
+            != (
+                "GET",
+                f"/v1/456/vouchers/purchase/fileguid/{guid}",
+                b"",
+                "Bearer " + token,
+            )
+        ):
+            raise ValueError("Native resource smoke failed: draft lookup shapes")
+    count = len(requests)
+    no_similar_body = {"PurchaseType": "cash", "__smoke_no_similar": True}
+    value = invoke(
+        ["purchase-vouchers", "similar", "--organization", "456", "--input", "-"],
+        0,
+        json.dumps(no_similar_body),
+    )
+    if (
+        value != NO_SIMILAR
+        or len(requests) != count + 1
+        or requests[-1][:2]
+        != (
+            "POST",
+            "/v1/456/vouchers/purchase/similar",
+        )
+        or json.loads(requests[-1][2]) != no_similar_body
+        or requests[-1][3] != "Bearer " + token
+    ):
+        raise ValueError("Native resource smoke failed: similar not found")
+    # A second download cannot overwrite a file; failed responses cannot leave partial bytes.
+    destination = Path(directory) / "native-receipt.bin"
+    count = len(requests)
+    error = invoke(
+        ["files", "download", GUID, "--organization", "456", "--output", str(destination)], 2, None
+    )
+    if (
+        len(requests) != count
+        or error.get("error") is not True
+        or destination.read_bytes() != DOCUMENT
+    ):
+        raise ValueError("Native resource smoke failed: download overwrite")
+    for guid, (code, status) in DOWNLOAD_FAILURES.items():
+        target = Path(directory) / f"failed-{guid}.bin"
+        count = len(requests)
+        error = invoke(
+            ["files", "download", guid, "--organization", "456", "--output", str(target)],
+            code,
+            None,
+        )
+        if (
+            len(requests) != count + 1
+            or error.get("status") != status
+            or error.get("error") is not True
+        ):
+            raise ValueError("Native resource smoke failed: download error or retry")
+        if target.exists() or list(Path(directory).glob(".dinero-download-*")):
+            raise ValueError("Native resource smoke failed: partial download")
+        if code == 6 and error["details"].get("retry_after") != "17":
+            raise ValueError("Native resource smoke failed: download rate limit")
     # Unknown body fields are preserved, so the private fixture can inject failure outcomes
     # without adding a production test mode or token endpoint override to the executable.
     for arguments, _, _, body in resource_cases():
