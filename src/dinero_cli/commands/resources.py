@@ -36,7 +36,7 @@ def file_id_path(value: str) -> str:
         not value
         or value in {".", ".."}
         or any(char in value for char in "/\\%?#{}")
-        or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in value)
+        or any(char.isspace() or ord(char) < 32 or 127 <= ord(char) <= 159 for char in value)
     ):
         raise CLIError(
             "File ID must be a non-empty URL path segment without delimiters or controls."
